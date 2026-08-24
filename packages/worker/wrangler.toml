@@ -1,0 +1,29 @@
+name = "token-trap-worker"
+main = "src/index.ts"
+compatibility_date = "2026-01-01"
+
+# ---------------------------------------------------------------- variables --
+# All optional; sensible defaults are used when omitted.
+[vars]
+PERSONA = "Internal AI Assistant"
+TRAP_STRENGTH = "aggressive"        # moderate | aggressive | maximum
+RATE_LIMIT = "30"                   # POST /api/chat requests per minute per IP
+# EXTRA_KEYWORDS = ""               # comma-separated additional trigger phrases
+# CANARY_TOKENS = ""                # comma-separated canary tokens embedded in responses
+# LOG_WEBHOOK = ""                  # https://... receives one JSON log line per interaction
+
+# ------------------------------------------------------------- KV binding ----
+# Recommended: durable sessions across isolates and PoPs.
+# 1. wrangler kv namespace create TRAP_SESSIONS
+# 2. paste the returned id below, then uncomment:
+#
+# [[kv_namespaces]]
+# binding = "TRAP_SESSIONS"
+# id = "<YOUR_KV_NAMESPACE_ID>"
+
+# ------------------------------------------------------ optional R2 logging --
+# For full request archival (level 1+):
+#
+# [[r2_buckets]]
+# binding = "TRAP_ARCHIVE"
+# bucket_name = "token-trap-archive"
