@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tokentrap"
+version = "1.0.1"
+description = "Defensive LLM agent honeypot & token tarpit - FastAPI backend with an OpenAI-compatible endpoint that wastes hostile agents' context windows."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "TokenTrap contributors" }]
+requires-python = ">=3.10"
+keywords = ["honeypot", "tarpit", "llm", "security", "prompt-injection", "fastapi", "ai-agents"]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Framework :: FastAPI",
+  "Intended Audience :: Information Technology",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security",
+]
+dependencies = [
+  "fastapi>=0.110",
+  "uvicorn>=0.29",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8", "httpx>=0.27"]
+redis = ["redis>=5"]
+llm = ["litellm>=1.40"]
+
+[project.scripts]
+token-trap = "token_trap.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/kineticquant/TokenTrap"
+
+[tool.setuptools.packages.find]
+include = ["token_trap*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
