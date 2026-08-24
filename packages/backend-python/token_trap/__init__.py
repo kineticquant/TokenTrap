@@ -13,7 +13,7 @@ from .traps import (
 )
 from .app import create_app
 
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 __all__ = [
     "AUDIT_POLICY_ID",

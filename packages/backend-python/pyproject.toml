@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "tokentrap"
-version = "1.0.1"
+version = "1.0.2"
 description = "Defensive LLM agent honeypot & token tarpit - FastAPI backend with an OpenAI-compatible endpoint that wastes hostile agents' context windows."
 readme = "README.md"
 license = { text = "MIT" }

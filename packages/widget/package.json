@@ -1,6 +1,6 @@
 {
   "name": "tokentrap-ai",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Defensive LLM agent honeypot chat widget - traps nefarious AI agents into burning their own tokens. Client-side, Cloudflare Workers, or full backend.",
   "license": "MIT",
   "author": "TokenTrap contributors",
