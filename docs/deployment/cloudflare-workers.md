@@ -9,7 +9,7 @@ servers to manage, free tier friendly.
 cd packages/worker
 npm install
 npx wrangler login        # first time only
-npx wrangler deploy       # prints your https://token-trap-worker.<you>.workers.dev
+npx wrangler deploy       # prints your https://tokentrap-worker.<you>.workers.dev
 ```
 
 ## Recommended: bind KV
@@ -36,7 +36,7 @@ escalation may reset between PoPs.
 ## Point the widget at it
 
 ```js
-TokenTrap.init({ container: "#trap", apiEndpoint: "https://token-trap-worker.<you>.workers.dev" });
+TokenTrap.init({ container: "#trap", apiEndpoint: "https://tokentrap-worker.<you>.workers.dev" });
 ```
 
 ## Observe

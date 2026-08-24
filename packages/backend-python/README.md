@@ -20,7 +20,7 @@ pip install -e "packages/backend-python[test]"
 ## 60-second start
 
 ```bash
-token-trap serve --port 8787 --strength aggressive --canary-tokens audit-777
+tokentrap serve --port 8787 --strength aggressive --canary-tokens audit-777
 # then point the widget at it:
 #   TokenTrap.init({ apiEndpoint: "http://127.0.0.1:8787", ... })
 ```

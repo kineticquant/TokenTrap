@@ -1,4 +1,4 @@
-name = "token-trap-worker"
+name = "tokentrap-worker"
 main = "src/index.ts"
 compatibility_date = "2026-01-01"
 
@@ -26,4 +26,4 @@ RATE_LIMIT = "30"                   # POST /api/chat requests per minute per IP
 #
 # [[r2_buckets]]
 # binding = "TRAP_ARCHIVE"
-# bucket_name = "token-trap-archive"
+# bucket_name = "tokentrap-archive"

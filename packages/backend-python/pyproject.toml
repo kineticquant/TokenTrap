@@ -8,7 +8,7 @@ version = "1.0.2"
 description = "Defensive LLM agent honeypot & token tarpit - FastAPI backend with an OpenAI-compatible endpoint that wastes hostile agents' context windows."
 readme = "README.md"
 license = { text = "MIT" }
-authors = [{ name = "TokenTrap contributors" }]
+authors = [{ name = "kineticquant" }]
 requires-python = ">=3.10"
 keywords = ["honeypot", "tarpit", "llm", "llm-security", "ai-security", "ai-safety", "ai-agents", "cybersecurity", "deception-technology", "threat-detection", "security-tools", "prompt-injection", "openai-compatible", "fastapi", "security"]
 classifiers = [
@@ -34,6 +34,7 @@ redis = ["redis>=5"]
 llm = ["litellm>=1.40"]
 
 [project.scripts]
+tokentrap = "token_trap.cli:main"
 token-trap = "token_trap.cli:main"
 
 [project.urls]

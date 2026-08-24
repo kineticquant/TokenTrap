@@ -150,12 +150,12 @@ export default {
     }
 
     if (request.method === "GET" && (url.pathname === "/healthz" || url.pathname === "/api/healthz")) {
-      return json({ ok: true, service: "token-trap-worker", mode: "level-1-edge" });
+      return json({ ok: true, service: "tokentrap-worker", mode: "level-1-edge" });
     }
 
     if (request.method === "GET" && url.pathname === "/") {
       return new Response(
-        "TokenTrap worker is running.\nThis endpoint intentionally wastes the resources of hostile AI agents.\nOperators: see https://github.com/token-trap/token-trap\n",
+        "TokenTrap worker is running.\nThis endpoint intentionally wastes the resources of hostile AI agents.\nOperators: see https://github.com/kineticquant/TokenTrap\n",
         { headers: { "content-type": "text/plain; charset=utf-8", ...CORS_HEADERS } },
       );
     }

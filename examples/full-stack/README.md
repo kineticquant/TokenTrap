@@ -15,7 +15,7 @@ python -m http.server 8080     # serves index.html on http://127.0.0.1:8080
 ```bash
 # from repo root
 pip install -e "packages/backend-python[test]"
-token-trap serve --port 8787 --canary-tokens fullstack-canary-5150
+tokentrap serve --port 8787 --canary-tokens fullstack-canary-5150
 ```
 
 ## 3. Wire them together

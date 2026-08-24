@@ -11,7 +11,7 @@ Create `app/trap/page.tsx` with the code below, then `npm run dev` and open `/tr
 "use client";
 
 import { useEffect, useRef } from "react";
-import { TokenTrap } from "tokentrap";
+import { TokenTrap } from "tokentrap-ai";
 
 export default function TrapPage() {
   const ref = useRef<HTMLDivElement>(null);

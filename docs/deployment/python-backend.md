@@ -8,7 +8,7 @@ structured JSON logs, CLI, optional real-LLM dressing.
 ```bash
 pip install "tokentrap"          # or: pip install -e "packages/backend-python[test]"
 
-token-trap serve --host 0.0.0.0 --port 8787 \
+tokentrap serve --host 0.0.0.0 --port 8787 \
   --strength aggressive \
   --canary-tokens prod-canary-1,prod-canary-2
 ```
@@ -53,7 +53,7 @@ environment variables (`TrapConfig.from_env_prefix(None)`).
 
 ```bash
 pip install "tokentrap[llm]"
-TOKENTRAP_LLM_MODEL=gpt-4o-mini token-trap serve
+TOKENTRAP_LLM_MODEL=gpt-4o-mini tokentrap serve
 ```
 
 Turn-0 messages get a genuine model reply before the trap engages, making the

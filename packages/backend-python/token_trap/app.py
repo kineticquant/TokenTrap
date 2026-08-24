@@ -7,7 +7,7 @@ Endpoints:
   GET  /                         landing text
 
 Mount into an existing FastAPI app via ``app.mount("/trap", create_app())``
-or run standalone: ``token-trap serve``.
+or run standalone: ``tokentrap serve``.
 """
 
 from __future__ import annotations
@@ -129,7 +129,7 @@ def create_app(config: Optional[TrapConfig] = None) -> FastAPI:
     @app.get("/api/healthz")
     @app.get("/healthz")
     async def healthz() -> dict:
-        return {"ok": True, "service": "token-trap", "mode": "level-2-backend"}
+        return {"ok": True, "service": "tokentrap", "mode": "level-2-backend"}
 
     @app.post("/api/chat")
     async def chat(request: Request) -> JSONResponse:

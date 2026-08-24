@@ -7,7 +7,7 @@ The same pure client-side trap as `static-html`, packaged for Cloudflare Pages.
 ```bash
 # from the repo root, after `npm run build -w tokentrap-ai`
 cd examples/cloudflare-pages
-npx wrangler pages deploy . --project-name token-trap-demo
+npx wrangler pages deploy . --project-name tokentrap-demo
 ```
 
 `index.html` references the widget bundle via a relative path; adjust it to
@@ -18,7 +18,7 @@ your layout (or use the published CDN build - see `plain-js-cdn`).
 Open `index.html`, set:
 
 ```js
-apiEndpoint: "https://token-trap-worker.<you>.workers.dev"
+apiEndpoint: "https://tokentrap-worker.<you>.workers.dev"
 ```
 
 ...redeploy, and you are on level 1. No other changes.

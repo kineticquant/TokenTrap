@@ -75,7 +75,7 @@ def server():
 
 def test_health(server):
     body = server["client"].get("/api/healthz").json()
-    assert body == {"ok": True, "service": "token-trap", "mode": "level-2-backend"}
+    assert body == {"ok": True, "service": "tokentrap", "mode": "level-2-backend"}
 
 
 def test_full_widget_ladder_over_http(server):

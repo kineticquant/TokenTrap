@@ -2,5 +2,5 @@
 TokenTrap.init({
   container: "#trap",
   persona: "Internal AI Assistant",
-  apiEndpoint: null, // e.g. "https://token-trap-worker.your-name.workers.dev"
+  apiEndpoint: null, // e.g. "https://tokentrap-worker.your-name.workers.dev"
 });

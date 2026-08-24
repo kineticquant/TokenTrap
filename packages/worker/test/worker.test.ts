@@ -34,7 +34,7 @@ function post(body: unknown, ip = "203.0.113.9"): Request {
   });
 }
 
-describe("token-trap worker", () => {
+describe("tokentrap worker", () => {
   it("answers healthz and CORS preflight", async () => {
     const health = await worker.fetch(new Request("https://x/healthz"), makeEnv(), ctx());
     expect(health.status).toBe(200);

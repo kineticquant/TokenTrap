@@ -17,7 +17,7 @@ the visitor's browser.
 2. Add to a page:
 
 ```html
-<script src="token-trap.iife.js"></script>
+<script src="tokentrap-ai/dist/cdn.global.js"></script>
 <div id="trap"></div>
 <script>
   TokenTrap.init({

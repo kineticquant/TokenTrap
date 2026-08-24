@@ -9,7 +9,7 @@ Replace `src/App.jsx` with the code below, then `npm run dev`.
 
 ```jsx
 import { useEffect, useRef } from "react";
-import { TokenTrap } from "tokentrap";
+import { TokenTrap } from "tokentrap-ai";
 
 export default function App() {
   const ref = useRef(null);

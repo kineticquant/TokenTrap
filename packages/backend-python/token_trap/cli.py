@@ -1,7 +1,7 @@
 """`token-trap` command line interface.
 
 Usage:
-    token-trap serve [--host H] [--port P] [options]
+    tokentrap serve [--host H] [--port P] [options]
     python -m token_trap serve
 """
 
@@ -17,10 +17,10 @@ from .config import TrapConfig, STRENGTHS
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="token-trap",
+        prog="tokentrap",
         description="TokenTrap - defensive LLM agent honeypot & token tarpit.",
     )
-    parser.add_argument("--version", action="version", version=f"token-trap {__version__}")
+    parser.add_argument("--version", action="version", version=f"tokentrap {__version__}")
     sub = parser.add_subparsers(dest="command")
 
     serve = sub.add_parser("serve", help="run the TokenTrap backend")

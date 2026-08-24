@@ -98,7 +98,7 @@ Upgrade path:
 TokenTrap.init({
   container: "#trap",
   apiEndpoint: null,                                            // level 0
-  // apiEndpoint: "https://token-trap-worker.you.workers.dev",  // level 1
+  // apiEndpoint: "https://tokentrap-worker.you.workers.dev",  // level 1
   // apiEndpoint: "https://api.your-domain.com",                // level 2
 });
 ```
@@ -128,7 +128,7 @@ cd packages/worker && npx wrangler deploy
 
 ```bash
 pip install tokentrap
-token-trap serve --port 8787 --canary-tokens prod-canary-1
+tokentrap serve --port 8787 --canary-tokens prod-canary-1
 ```
 [`examples/fastapi-standalone`](examples/fastapi-standalone) · [`examples/full-stack`](examples/full-stack)
 

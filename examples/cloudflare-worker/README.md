@@ -5,7 +5,7 @@
    ```bash
    cd packages/worker
    npx wrangler deploy
-   # note the printed URL: https://token-trap-worker.<you>.workers.dev
+   # note the printed URL: https://tokentrap-worker.<you>.workers.dev
    ```
 
 2. Point any widget at it:
@@ -13,14 +13,14 @@
    ```js
    TokenTrap.init({
      container: "#trap",
-     apiEndpoint: "https://token-trap-worker.<you>.workers.dev",
+     apiEndpoint: "https://tokentrap-worker.<you>.workers.dev",
    });
    ```
 
 A ready-made page lives in this folder:
 
 ```bash
-npx wrangler pages deploy . --project-name token-trap-demo
+npx wrangler pages deploy . --project-name tokentrap-demo
 # then edit config.js with your worker URL
 ```
 
