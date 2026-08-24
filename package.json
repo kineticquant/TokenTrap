@@ -1,7 +1,7 @@
 {
   "name": "tokentrap-monorepo",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "TokenTrap - defensive LLM agent honeypot & token tarpit (monorepo)",
   "license": "MIT",
   "type": "module",

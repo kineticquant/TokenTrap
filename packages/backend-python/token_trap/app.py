@@ -85,7 +85,7 @@ def create_app(config: Optional[TrapConfig] = None) -> FastAPI:
 
     app = FastAPI(
         title="TokenTrap",
-        version="1.0.0",
+        version="1.0.1",
         description="Defensive LLM agent honeypot. Do not point real users here.",
         docs_url=None,
         redoc_url=None,

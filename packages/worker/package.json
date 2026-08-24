@@ -1,6 +1,6 @@
 {
   "name": "tokentrap-worker-template",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "Cloudflare Workers backend for TokenTrap (level 1) - sessions, structured logging, canaries, rate limiting.",
   "license": "MIT",
