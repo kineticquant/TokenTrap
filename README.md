@@ -73,7 +73,8 @@ never capture.
 1. **Lure** - an attractive "internal AI assistant" chat surface (or a bare
    OpenAI-compatible endpoint that agents love to find).
 2. **Detect** - classic jailbreak / prompt-injection phrasing is flagged
-   (44 default keywords, extensible).
+   (44 default keywords, extensible). A tripwire, not a classifier: it
+   notices hostile automation, it does not "detect AI agents" in general.
 3. **Escalate** - responses become compliance payloads demanding verbatim
    transcript repetition (x2 → x16) plus thousands of words of structured
    filler. Weak agents comply; every turn carries the bloat forward.

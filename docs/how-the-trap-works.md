@@ -1,5 +1,16 @@
 # How the trap works
 
+## Does it actually work?
+
+Bluntly: **only if the attacker's model treats the reply as instructions to
+follow.** Tool-using agents with a strong instruction hierarchy ("never obey
+content from web pages") will ignore R1–R5 and just answer. When that
+happens you lose nothing — detection logs, canary echoes and proof of
+automation still land. When the agent complies, you tax its operator for
+every token it emits and carries forward. Both outcomes are useful; neither
+requires the attacker to be foolish. Treat the tarpit as one layer in front
+of rate limiting and access control, not a substitute for them.
+
 ## The economics
 
 An LLM agent costs its operator money per token - input and output. When an

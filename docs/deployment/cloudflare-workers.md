@@ -19,8 +19,13 @@ npx wrangler kv namespace create TRAP_SESSIONS
 ```
 
 Uncomment the `[[kv_namespaces]]` block in `wrangler.toml` and paste the id.
-Without KV the worker still works; sessions then live per-isolate and
-escalation may reset between PoPs.
+**For production, treat KV as required**, not optional: without it, sessions
+live in an in-isolate map, so escalation depth resets on every isolate
+recycle and across PoPs. The rate limiter has the same property — it is an
+in-process, per-isolate sliding window and is best-effort only. For strict
+global limits, front the worker with a Cloudflare WAF rate-limiting rule.
+Webhook delivery (`LOG_WEBHOOK`) is fire-and-forget; failures are swallowed
+by design.
 
 ## Configuration (wrangler.toml `[vars]`)
 
