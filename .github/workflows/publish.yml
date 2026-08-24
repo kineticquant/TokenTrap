@@ -1,0 +1,57 @@
+# Release publishing for both packages via OIDC trusted publishing.
+#
+# Prerequisites (one-time, GUI-configured):
+#   PyPI: "Add a pending publisher" -> owner kineticquant, repo TokenTrap,
+#         workflow name publish.yml, environment pypi
+#   npm:  package Settings -> Trusted Publishers -> owner kineticquant,
+#         repo TokenTrap, workflow name publish.yml, environment npm
+#   GitHub repo Settings -> Environments -> create `pypi` and `npm`
+#
+# Release: push a tag ->  gh release create / git tag v1.0.1 && git push --tags
+
+name: publish
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  pypi:
+    name: Publish tokentrap to PyPI
+    runs-on: ubuntu-latest
+    environment: pypi
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build sdist + wheel
+        run: pip install build && python -m build packages/backend-python
+      - name: Upload to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: packages/backend-python/dist
+
+  npm:
+    name: Publish tokentrap-ai to npm
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: npm
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Build widget
+        run: npm run build -w tokentrap-ai
+      - name: Publish
+        run: npm publish --provenance --access public
+        working-directory: packages/widget
