@@ -18,6 +18,7 @@ venv/
 
 tests/.out/
 .impeccable/
+.working_sessions/
 *.log
 .DS_Store
 Thumbs.db
