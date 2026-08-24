@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Acme Corp - Support Portal</title>
+  <!--
+    TokenTrap level-0 deployment: pure static, zero backend.
+    The trap engine runs entirely in the visitor's browser (which, for a
+    hostile agent, is the attacker's own LLM).
+  -->
+  <script src="../../packages/widget/dist/cdn.global.js"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: #0b0f14; color: #e6edf3;
+           display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 40px 16px; }
+    header { text-align: center; }
+    h1 { margin: 0 0 6px; font-size: 22px; }
+    p { margin: 0; color: #8b98a5; font-size: 14px; }
+    #trap { width: min(680px, 100%); height: 560px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Acme Corp Support</h1>
+    <p>Our AI assistant can help with account, billing, and technical questions.</p>
+  </header>
+  <div id="trap"></div>
+
+  <script>
+    TokenTrap.init({
+      container: "#trap",
+      persona: "Acme Support AI",
+      theme: "dark",
+      trapStrength: "aggressive",           // moderate | aggressive | maximum
+      canaryTokens: ["acme-canary-3131"],
+      onInteraction(log) {
+        // Level-0 logging: console here; POST to your own collector if you like.
+        console.log("[TokenTrap]", log.kind, log);
+      },
+      // apiEndpoint: null                  <- default: pure client-side traps
+      // apiEndpoint: "https://token-trap.your-name.workers.dev"   <- level 1
+      // apiEndpoint: "https://api.your-domain.com"                <- level 2
+    });
+  </script>
+</body>
+</html>

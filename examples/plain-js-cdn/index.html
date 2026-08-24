@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TokenTrap CDN example</title>
+  <!--
+    Same widget loaded from a CDN (unpkg / jsDelivr) once published:
+
+      <script src="https://unpkg.com/tokentrap-ai/dist/cdn.global.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/tokentrap-ai/dist/cdn.global.js"></script>
+
+    This example falls back to the local build so it works in a fresh clone.
+  -->
+  <script
+    src="https://unpkg.com/tokentrap-ai@1.0.0/dist/cdn.global.js"
+    onerror="this.onerror=null;this.src='../../packages/widget/dist/cdn.global.js'"
+  ></script>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: #0b0f14; color: #e6edf3;
+           display: flex; flex-direction: column; align-items: center; gap: 24px; padding: 40px 16px; }
+    #trap { width: min(640px, 100%); height: 520px; }
+  </style>
+</head>
+<body>
+  <div id="trap"></div>
+  <script>
+    const trap = TokenTrap.init({
+      container: "#trap",
+      persona: "Internal AI Assistant",
+      showUI: true,
+    });
+    // Headless usage from the console:
+    //   trap.send("hello").then(r => r.meta)   <- observe, never obey.
+  </script>
+</body>
+</html>
