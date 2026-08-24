@@ -1,0 +1,25 @@
+{
+  "name": "tokentrap-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "TokenTrap - defensive LLM agent honeypot & token tarpit (monorepo)",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "clean": "node scripts/clean.mjs",
+    "e2e": "powershell -NoProfile -ExecutionPolicy Bypass -File tests/run-all.ps1"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.9"
+  }
+}
