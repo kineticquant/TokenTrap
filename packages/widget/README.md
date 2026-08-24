@@ -3,6 +3,11 @@
 The embeddable TokenTrap chat widget - and the shared trap engine used by
 every JS runtime in the project.
 
+> **Defensive only.** Traps fire on connections the attacker initiates — no
+> exploits, no outbound traffic, no human deception. Operators are solely
+> responsible for lawful use in their jurisdiction. See
+> <https://github.com/kineticquant/TokenTrap/blob/main/docs/ethics-and-legal.md>.
+
 ## Install
 
 ```bash

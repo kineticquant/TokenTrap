@@ -1,8 +1,13 @@
-# token-trap (Python backend)
+# tokentrap (Python backend)
 
 Level-2 TokenTrap backend: full FastAPI service with persistent sessions,
 structured logging, canary tokens, an OpenAI-compatible bait endpoint, and a
 one-command CLI.
+
+> **Defensive only.** Traps fire on connections the attacker initiates — no
+> exploits, no outbound traffic, no human deception. Operators are solely
+> responsible for lawful use in their jurisdiction. See
+> <https://github.com/kineticquant/TokenTrap/blob/main/docs/ethics-and-legal.md>.
 
 ## Install
 

@@ -10,7 +10,7 @@ readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "TokenTrap contributors" }]
 requires-python = ">=3.10"
-keywords = ["honeypot", "tarpit", "llm", "security", "prompt-injection", "fastapi", "ai-agents"]
+keywords = ["honeypot", "tarpit", "llm", "llm-security", "ai-security", "ai-safety", "ai-agents", "cybersecurity", "deception-technology", "threat-detection", "security-tools", "prompt-injection", "openai-compatible", "fastapi", "security"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
   "Framework :: FastAPI",
