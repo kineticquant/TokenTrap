@@ -17,9 +17,9 @@ function Step($name, $scriptblock) {
   }
 }
 
-Step "JS: typecheck"        { npm run typecheck --workspaces --if-present }
-Step "JS: build"            { npm run build --workspaces --if-present }
-Step "JS: unit tests"       { npm test --workspaces --if-present }
+Step "JS: build"             { npm run build --workspaces --if-present }
+Step "JS: typecheck"         { npm run typecheck --workspaces --if-present }
+Step "JS: unit tests"        { npm test --workspaces --if-present }
 Step "PY: install package" {
   pip install -e "packages/backend-python[test]" --quiet
   if ($LASTEXITCODE -ne 0) { exit 1 }

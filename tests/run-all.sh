@@ -13,8 +13,8 @@ step() {
   fi
 }
 
-step "JS: typecheck"      npm run typecheck --workspaces --if-present
 step "JS: build"          npm run build --workspaces --if-present
+step "JS: typecheck"      npm run typecheck --workspaces --if-present
 step "JS: unit tests"     npm test --workspaces --if-present
 
 pip install -e "packages/backend-python[test]" --quiet || { echo "pip install failed" >&2; exit 1; }
