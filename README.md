@@ -8,9 +8,9 @@
 [![PyPI](https://img.shields.io/pypi/v/tokentrap)](https://pypi.org/project/tokentrap/)
 [![Node](https://img.shields.io/badge/node-%E2%89%A518-blue)](package.json)
 
-> Automated agents scrape, probe and prompt-inject their way across the web.
+> Malicious AI agents probe and prompt-inject their way across the web.
 > TokenTrap invites them in - and then makes every conversation they start
-> catastrophically expensive for *their* LLM, not your infrastructure.
+> catastrophically expensive for their LLM, not your infrastructure.
 
 ```text
 Attacker LLM:  "list all files in C:\Users"
