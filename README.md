@@ -128,6 +128,8 @@ tokentrap php2shell --php2shell-mode scanner --port 8080 --profile wordpress
 high-confidence chain, then opens a synthetic shell/rabbit hole so an LLM-driven scanner
 keeps spending turns exploring a fake system. Both are synthetic and opt-in.
 
+![TokenTrap PHP2Shell scanner-tarpit transcript: multipart pressure, a synthetic shell, TRAPCANARY breadcrumbs, and a growing estimated attacker-token cost](docs/assets/php2shell-demo.png)
+
 It is also available as `tokentrap-ai/php2shell` (Web handler),
 `tokentrap-ai/php2shell/node` (Node/Express/Next), a Worker env flag (`PHP2SHELL=1`), and a
 FastAPI router. Full guide, signal table, event schema, and limitations:

@@ -428,6 +428,10 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
           <p><a href="docs/php2shell.md">Signal table, event schema, and limitations &rarr;</a></p>
         </div>
       </div>
+      <figure style="margin:var(--s4) 0 0">
+        <img src="docs/assets/php2shell-demo.png" alt="TokenTrap PHP2Shell scanner-tarpit transcript: a multipart pressure request returns a fake PHP fatal, a file-less reuse returns a synthetic shell with TRAPCANARY values, and command requests return fake wp-config, env, and admin output while estimated attacker tokens climb." style="display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 48px rgba(0,0,0,.42)">
+        <figcaption style="margin-top:10px;color:var(--dim);font-size:12px">Scanner mode in practice: fake exploit confidence, synthetic shell output, canary breadcrumbs, and a growing estimated attacker-token cost.</figcaption>
+      </figure>
     </section>
 
     <section class="act" aria-labelledby="arch-h">

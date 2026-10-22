@@ -74,6 +74,8 @@ The decoy is synthetic: no PHP execution, uploads, shell commands, or proxying.
 See <https://github.com/kineticquant/TokenTrap/blob/main/docs/php2shell.md> for the
 signal table, event schema, and limitations.
 
+![TokenTrap PHP2Shell scanner-tarpit transcript](https://raw.githubusercontent.com/kineticquant/TokenTrap/main/docs/assets/php2shell-demo.png)
+
 ## Optional real-LLM dressing
 
 With `pip install "tokentrap[llm]"`, set `llm_model` / `--llm-model` and turn-0

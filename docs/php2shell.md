@@ -201,6 +201,8 @@ Scanner mode only engages after a high-confidence chain. A plain version-banner 
 single 500 response still gets the tripwire path; the fake shell requires the multipart
 pressure/reuse pattern or an explicit command probe.
 
+![TokenTrap PHP2Shell scanner-tarpit transcript](assets/php2shell-demo.png)
+
 ## Events
 
 Every request emits one JSON event (stdout, `onEvent`, and/or webhook):

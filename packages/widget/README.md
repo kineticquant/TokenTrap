@@ -93,6 +93,8 @@ The decoy is a separate opt-in surface; it does not change the chat engine. See
 <https://github.com/kineticquant/TokenTrap/blob/main/docs/php2shell.md> and the
 <https://github.com/kineticquant/TokenTrap/blob/main/docs/releases/1.1.0.md> release notes.
 
+![TokenTrap PHP2Shell scanner-tarpit transcript](https://raw.githubusercontent.com/kineticquant/TokenTrap/main/docs/assets/php2shell-demo.png)
+
 ## Build targets
 
 ESM (`dist/index.js`), CJS (`dist/index.cjs`), IIFE/CDN
