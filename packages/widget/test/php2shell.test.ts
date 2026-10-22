@@ -207,7 +207,9 @@ describe("createPhp2ShellDecoy", () => {
     const events: string[] = [];
     const decoy = createPhp2ShellDecoy({
       now: () => 1000,
-      onEvent: (e) => events.push(e.response.phase),
+      onEvent: (e) => {
+        events.push(e.response.phase);
+      },
     });
     const boundary = "----trap";
     const pressureBody = [

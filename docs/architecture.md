@@ -23,8 +23,25 @@ deterministic and dependency-free; everything else is delivery.
 | Package | Runtime | Role |
 | --- | --- | --- |
 | `packages/widget` | Browser / Node | `tokentrap`: UI orchestrator **and** the pure engine (`tokentrap-ai/engine`) used by every JS runtime |
+| `packages/widget` | Web / Node | `tokentrap-ai/php2shell` HTTP decoy core, `tokentrap-ai/php2shell/node` adapters, `tokentrap-php2shell` CLI |
 | `packages/worker` | Cloudflare Workers | Level-1 backend: KV sessions, rate limiting, canary echo detection, structured logs, optional webhook/R2 archival |
 | `packages/backend-python` | CPython 3.10+ | Level-2 backend: `tokentrap` PyPI package, FastAPI app factory, OpenAI-compatible bait endpoint, CLI |
+
+## PHP2Shell decoy layer
+
+The PHP2Shell module is an optional fourth surface, not a change to the chat engine:
+
+- `packages/widget/src/php2shell/` holds the dependency-free detector, phase state
+  machine, response templates, canary generator, and Web `Request → Response` handler.
+- Node/Express/Next adapters live behind `tokentrap-ai/php2shell/node`; the CLI is
+  `tokentrap-php2shell`.
+- The Worker imports the same core and enables it with `PHP2SHELL=1`.
+- Python mirrors the detection/state/response contract in
+  `token_trap/php2shell/` and exposes `create_php2shell_router` / `create_php2shell_app`.
+
+The shared fixtures in `tests/fixtures/php2shell/cases.json` are the cross-language
+contract. The chat engine's payload parity tests are untouched. See
+[`php2shell.md`](php2shell.md).
 
 ## Data flow (widget protocol)
 

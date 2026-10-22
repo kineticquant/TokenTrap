@@ -14,13 +14,19 @@ the broader discussion about agentic crawling economics.
 - Instructs those agents, via defensive prompt injection, to spend their own
   tokens reproducing transcripts and generating filler.
 - Logs interactions and detects replayed canary tokens.
+- Optionally serves a synthetic PHP2Shell HTTP decoy that records exploit-chain
+  markers and plants invalid `TRAPCANARY-…` values in a simulated memory leak.
 
 ## What it never does
 
 - No outbound connections to the visitor/attacker.
-- No malware, exploits, or fingerprinting beyond message text.
+- No malware, exploits, or fingerprinting beyond message text and bounded
+  request metadata.
+- No real PHP execution, shell execution, upload persistence, or proxying to a
+  live application.
+- No real credentials. Decoy canaries are invalid outside the honeypot.
 - No deception of humans; a human reading the output sees an obviously
-  bureaucratic compliance notice.
+  bureaucratic compliance notice or a plainly fake PHP error page.
 - Nothing happens without the remote side initiating contact first.
 
 ## Intended use
@@ -44,8 +50,10 @@ Resource-wasting honeypots operate in roughly the same territory as
 long-standing web tarpits: you are serving content to clients who requested
 it. Considerations vary by jurisdiction - defamation-free content, no
 entrapment-style luring of identifiable individuals, data-protection rules
-for anything you log. If in doubt, get counsel before deploying publicly at
-scale.
+for anything you log. The PHP2Shell decoy additionally processes hostile
+request bodies and can record attack metadata; use a dedicated hostname,
+bounded retention, and the same authorization review you would apply to any
+other honeypot. If in doubt, get counsel before deploying publicly at scale.
 
 ## No responsibility / no liability
 

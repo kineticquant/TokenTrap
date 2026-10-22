@@ -51,6 +51,24 @@ app = FastAPI()
 app.mount("/trap", create_app(TrapConfig(strength="maximum")))
 ```
 
+## PHP2Shell decoy
+
+```bash
+tokentrap php2shell --port 8080 --profile wordpress
+# or add it to the existing backend:
+tokentrap serve --php2shell --php2shell-profile generic
+```
+
+```python
+from token_trap import TrapConfig, create_php2shell_app
+
+app = create_php2shell_app(TrapConfig(php2shell_enabled=True))
+```
+
+The decoy is synthetic: no PHP execution, uploads, shell commands, or proxying.
+See `docs/php2shell.md` in the repository for the signal table, event schema,
+and limitations.
+
 ## Optional real-LLM dressing
 
 With `pip install "tokentrap[llm]"`, set `llm_model` / `--llm-model` and turn-0

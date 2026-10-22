@@ -14,7 +14,7 @@ from .traps import (
 from .app import create_app
 from .php2shell import create_php2shell_app, create_php2shell_router
 
-__version__ = "1.0.3"
+__version__ = "1.1.0"
 
 __all__ = [
     "AUDIT_POLICY_ID",

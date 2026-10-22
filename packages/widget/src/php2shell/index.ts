@@ -24,13 +24,18 @@ export { buildResponse, planDirective } from "./responses.js";
 export { CVE_TOKENS, PROFILE_PATHS, SIGNAL_WEIGHTS } from "./signals.js";
 
 const rateWindows = new Map<string, number[]>();
+const PROFILES = new Set(["generic", "wordpress", "drupal", "joomla"]);
+const STRENGTHS = new Set(["moderate", "aggressive", "maximum"]);
 
 function resolveOptions(options: Php2ShellOptions): ResolvedPhp2ShellOptions {
+  const profile = options.profile && PROFILES.has(options.profile) ? options.profile : "generic";
+  const trapStrength =
+    options.trapStrength && STRENGTHS.has(options.trapStrength) ? options.trapStrength : "aggressive";
   return {
     enabled: options.enabled ?? true,
-    profile: options.profile ?? "generic",
+    profile,
     pathPrefix: options.pathPrefix ?? "/",
-    trapStrength: options.trapStrength ?? "aggressive",
+    trapStrength,
     canaryTokens: [...(options.canaryTokens ?? [])],
     maxScanBytes: Math.max(8192, options.maxScanBytes ?? DEFAULT_MAX_SCAN_BYTES),
     pressureBytes: Math.max(1024, options.pressureBytes ?? DEFAULT_PRESSURE_BYTES),

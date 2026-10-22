@@ -47,3 +47,34 @@ identical behavior in Go/Rust/etc. wrappers.
 
 `showUI: false` turns the widget into a pure client library - useful for
 canary pages, API-bait pages, or wiring traps into your own UI.
+
+## PHP2Shell decoy
+
+The decoy is opt-in and configured separately from the chat widget.
+
+```ts
+import { createPhp2ShellDecoy } from "tokentrap-ai/php2shell";
+
+const decoy = createPhp2ShellDecoy({
+  profile: "wordpress",        // generic | wordpress | drupal | joomla
+  pathPrefix: "/",
+  trapStrength: "aggressive",
+  canaryTokens: ["audit-777"],
+  maxScanBytes: 2 * 1024 * 1024,
+  pressureBytes: 1024 * 1024,
+  rateLimitPerMinute: 120,
+  onEvent: (event) => console.log(JSON.stringify(event)),
+});
+```
+
+Worker env: `PHP2SHELL=1`, `PHP2SHELL_PROFILE`, `PHP2SHELL_STRENGTH`,
+`PHP2SHELL_CANARY_TOKENS`, `PHP2SHELL_SCAN_BYTES`, `PHP2SHELL_PRESSURE_BYTES`,
+`PHP2SHELL_WEBHOOK`.
+
+Python: `php2shell_enabled`, `php2shell_profile`, `php2shell_path_prefix`,
+`php2shell_strength`, `php2shell_canary_tokens`, `php2shell_max_scan_bytes`,
+`php2shell_pressure_bytes`, `php2shell_session_ttl_seconds`,
+`php2shell_rate_limit_per_minute`, `php2shell_max_preview_bytes`,
+`php2shell_webhook`.
+
+Full reference: [`php2shell.md`](php2shell.md).

@@ -109,6 +109,26 @@ TokenTrap.init({
 });
 ```
 
+## PHP2Shell decoy (CVE-2026-109618 / CVE-2026-109619)
+
+TokenTrap now includes an opt-in **HTTP decoy** for agents probing the PHP2Shell request
+chain. It impersonates a PHP application, detects multipart upload-progress pressure and
+cross-request stale-state patterns, correlates the chain into one session, returns
+near-miss PHP errors, and embeds the token-trap directive in high-confidence responses. It
+does not run PHP, ship an exploit, or write uploads.
+
+```bash
+npx tokentrap-php2shell --port 8080 --profile generic
+tokentrap php2shell --port 8080 --profile wordpress
+```
+
+It is also available as `tokentrap-ai/php2shell` (Web handler),
+`tokentrap-ai/php2shell/node` (Node/Express/Next), a Worker env flag (`PHP2SHELL=1`), and a
+FastAPI router. Full guide, signal table, event schema, and limitations:
+[`docs/php2shell.md`](docs/php2shell.md).
+
+**Patch PHP first.** The decoy is detection and deception, not remediation.
+
 ## Quick starts
 
 ### Static page (zero backend)
@@ -170,7 +190,7 @@ pwsh tests/run-all.ps1          # everything incl. e2e + parity (or tests/run-al
 ## Documentation
 
 - [Repository overview (visual)](OVERVIEW.html) · [Architecture](docs/architecture.md) · [How the trap works](docs/how-the-trap-works.md)
-- [Deployment: static](docs/deployment/static.md) · [Workers](docs/deployment/cloudflare-workers.md) · [Python](docs/deployment/python-backend.md)
+- [PHP2Shell decoy](docs/php2shell.md) · [Deployment: static](docs/deployment/static.md) · [Workers](docs/deployment/cloudflare-workers.md) · [Python](docs/deployment/python-backend.md)
 - [Customization](docs/customization.md) · [Research background](docs/research-background.md) · [Ethics & legal](docs/ethics-and-legal.md)
 
 ## Contributing
