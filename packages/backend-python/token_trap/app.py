@@ -288,4 +288,9 @@ def create_app(config: Optional[TrapConfig] = None) -> FastAPI:
         logger.error("unhandled error", exc_info=exc)
         return JSONResponse({"error": "internal error"}, status_code=500)
 
+    if cfg.php2shell_enabled:
+        from .php2shell.router import create_php2shell_router
+
+        app.include_router(create_php2shell_router(cfg))
+
     return app

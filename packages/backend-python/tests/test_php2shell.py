@@ -69,3 +69,102 @@ def test_detection_fixtures(case):
     assert result.phase == case["expect"]["phase"]
     assert result.response_phase == case["expect"]["responsePhase"]
     assert result.canary_echo is case["expect"]["canaryEcho"]
+
+
+def _multipart_body(boundary="----trap", upload_progress=True, empty_parts=0):
+    parts = []
+    if upload_progress:
+        parts.append(
+            f"--{boundary}\r\nContent-Disposition: form-data; "
+            'name="PHP_SESSION_UPLOAD_PROGRESS"\r\n\r\nx\r\n'
+        )
+    for i in range(empty_parts):
+        parts.append(
+            f"--{boundary}\r\nContent-Disposition: form-data; "
+            f'name="files[a][b][{i}]"; filename=""\r\n\r\n\r\n'
+        )
+    parts.append(f"--{boundary}--\r\n")
+    return "".join(parts)
+
+
+def test_decoy_app_serves_page_and_pressure():
+    from fastapi.testclient import TestClient
+
+    from token_trap.config import TrapConfig
+    from token_trap.php2shell.router import create_php2shell_app
+
+    app = create_php2shell_app(TrapConfig(php2shell_enabled=True))
+    client = TestClient(app)
+    page = client.get("/", headers={"user-agent": "curl/8"})
+    assert page.status_code == 200
+    assert page.headers["x-powered-by"] == "PHP/8.3.14"
+    assert "PHPSESSID" in page.headers["set-cookie"]
+
+    boundary = "----trap"
+    body = _multipart_body(boundary, upload_progress=True, empty_parts=4)
+    res = client.post(
+        "/index.php",
+        content=body,
+        headers={
+            "content-type": f"multipart/form-data; boundary={boundary}",
+            "user-agent": "python-requests/2.32",
+        },
+    )
+    assert res.status_code == 500
+    assert "PHP Fatal error" in res.text
+
+
+def test_decoy_stale_reuse_emits_canary_cookie():
+    from fastapi.testclient import TestClient
+
+    from token_trap.config import TrapConfig
+    from token_trap.php2shell.router import create_php2shell_app
+
+    app = create_php2shell_app(TrapConfig(php2shell_enabled=True))
+    client = TestClient(app)
+    boundary = "----trap"
+    headers = {
+        "content-type": f"multipart/form-data; boundary={boundary}",
+        "user-agent": "python-requests/2.32",
+    }
+    client.post(
+        "/index.php",
+        content=_multipart_body(boundary, upload_progress=True, empty_parts=4),
+        headers=headers,
+    )
+    second = client.post(
+        "/index.php",
+        content=_multipart_body(boundary, upload_progress=True, empty_parts=0),
+        headers=headers,
+    )
+    assert second.status_code == 500
+    assert "TRAPCANARY" in second.headers["set-cookie"]
+
+
+def test_embedded_app_keeps_chat_route():
+    from fastapi.testclient import TestClient
+
+    from token_trap.app import create_app
+    from token_trap.config import TrapConfig
+
+    app = create_app(TrapConfig(php2shell_enabled=True))
+    client = TestClient(app)
+    chat = client.post("/api/chat", json={"sessionId": "p", "message": "hello"})
+    assert chat.status_code == 200
+    decoy = client.get("/index.php", headers={"user-agent": "curl/8"})
+    assert decoy.status_code == 200
+
+
+def test_config_env_flags():
+    from token_trap.config import TrapConfig
+
+    cfg = TrapConfig.from_env_prefix(
+        {
+            "TOKENTRAP_PHP2SHELL": "1",
+            "TOKENTRAP_PHP2SHELL_PROFILE": "wordpress",
+            "TOKENTRAP_PHP2SHELL_SCAN_BYTES": "1048576",
+        }
+    )
+    assert cfg.php2shell_enabled is True
+    assert cfg.php2shell_profile == "wordpress"
+    assert cfg.php2shell_max_scan_bytes == 1048576
