@@ -31,6 +31,6 @@ pwsh tests/run-all.ps1     # Windows
 bash tests/run-all.sh      # Linux/macOS/CI
 ```
 
-Prerequisites: Node ≥ 18, Python ≥ 3.10, and once:
+Prerequisites: Node ≥ 22.23.4, Python ≥ 3.10, and once:
 `pip install -e "packages/backend-python[test]"` (the scripts also install it
 if missing).

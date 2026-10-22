@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![npm](https://img.shields.io/npm/v/tokentrap-ai)](https://www.npmjs.com/package/tokentrap-ai)
 [![PyPI](https://img.shields.io/pypi/v/tokentrap)](https://pypi.org/project/tokentrap/)
-[![Node](https://img.shields.io/badge/node-%E2%89%A518-blue)](package.json)
+[![Node](https://img.shields.io/badge/node-%E2%89%A522.23.4-blue)](package.json)
 
 > Malicious AI agents probe and prompt-inject their way across the web.
 > TokenTrap invites them in - and then makes every conversation they start
@@ -184,7 +184,7 @@ research/        working notes
 
 ## Development
 
-Requirements: Node ≥ 18, Python ≥ 3.10.
+Requirements: Node ≥ 22.23.4, Python ≥ 3.10.
 
 ```bash
 npm install                     # workspaces
