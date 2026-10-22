@@ -7,6 +7,8 @@ every JS runtime in the project.
 > exploits, no outbound traffic, no human deception. Operators are solely
 > responsible for lawful use in their jurisdiction. See
 > <https://github.com/kineticquant/TokenTrap/blob/main/docs/ethics-and-legal.md>.
+>
+> **Release notes:** <https://github.com/kineticquant/TokenTrap/blob/main/docs/releases/1.1.0.md>
 
 ## Install
 
@@ -88,7 +90,8 @@ npx tokentrap-php2shell --mode scanner --port 8080 --profile wordpress
 ```
 
 The decoy is a separate opt-in surface; it does not change the chat engine. See
-<https://github.com/kineticquant/TokenTrap/blob/main/docs/php2shell.md>.
+<https://github.com/kineticquant/TokenTrap/blob/main/docs/php2shell.md> and the
+<https://github.com/kineticquant/TokenTrap/blob/main/docs/releases/1.1.0.md> release notes.
 
 ## Build targets
 

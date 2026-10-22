@@ -8,8 +8,9 @@
   emulator is required for CI.
 - Sessions: KV binding `TRAP_SESSIONS` (24h TTL) when present, otherwise an
   in-isolate map.
-- Every response carries `x-tokentrap-canary-echo`; logs are JSON lines on
-  stdout (`wrangler tail`) and optionally POSTed to `LOG_WEBHOOK`.
+- Every `/api/chat` response carries `x-tokentrap-canary-echo`; logs are JSON lines on
+  stdout (`wrangler tail`) and optionally POSTed to `LOG_WEBHOOK`. The PHP2Shell
+  decoy emits its own `event: "php2shell"` JSON events.
 
 ## PHP2Shell decoy
 

@@ -96,7 +96,7 @@ Full mechanics: [`docs/how-the-trap-works.md`](docs/how-the-trap-works.md).
 | Package | `tokentrap-ai` | worker template | `tokentrap` (PyPI) |
 | Sessions | browser memory | KV (optional) | TTL store (+ Redis-ready) |
 | Logging | `onInteraction` callback | JSON logs + webhook + R2 | JSON logs + webhook |
-| Extras | - | canaries, rate limit, CORS | OpenAI bait endpoint, CLI, optional real LLM |
+| Extras | - | PHP2Shell decoy, canaries, rate limit, CORS | OpenAI bait endpoint, PHP2Shell decoy, CLI, optional real LLM |
 
 Upgrade path:
 
@@ -176,7 +176,7 @@ tokentrap serve --port 8787 --canary-tokens prod-canary-1
 
 ```
 packages/        widget · cloudflare worker · python backend
-examples/        static-html · pages · worker · react · nextjs · cdn · fastapi · full-stack
+examples/        static-html · pages · worker · react · nextjs · cdn · fastapi · full-stack · php2shell-node
 docs/            architecture · trap mechanics · deployment guides · research · ethics
 tests/           cross-package integration, e2e harness, TS↔PY parity suite
 research/        working notes
@@ -196,7 +196,8 @@ pwsh tests/run-all.ps1          # everything incl. e2e + parity (or tests/run-al
 ## Documentation
 
 - [Repository overview (visual)](OVERVIEW.html) · [Architecture](docs/architecture.md) · [How the trap works](docs/how-the-trap-works.md)
-- [PHP2Shell decoy](docs/php2shell.md) · [Deployment: static](docs/deployment/static.md) · [Workers](docs/deployment/cloudflare-workers.md) · [Python](docs/deployment/python-backend.md)
+- [PHP2Shell decoy](docs/php2shell.md) · [Release notes 1.1.0](docs/releases/1.1.0.md) · [Changelog](CHANGELOG.md)
+- [Deployment: static](docs/deployment/static.md) · [Workers](docs/deployment/cloudflare-workers.md) · [Python](docs/deployment/python-backend.md)
 - [Customization](docs/customization.md) · [Research background](docs/research-background.md) · [Ethics & legal](docs/ethics-and-legal.md)
 
 ## Contributing

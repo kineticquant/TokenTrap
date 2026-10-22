@@ -8,6 +8,8 @@ one-command CLI.
 > exploits, no outbound traffic, no human deception. Operators are solely
 > responsible for lawful use in their jurisdiction. See
 > <https://github.com/kineticquant/TokenTrap/blob/main/docs/ethics-and-legal.md>.
+>
+> **Release notes:** <https://github.com/kineticquant/TokenTrap/blob/main/docs/releases/1.1.0.md>
 
 ## Install
 
@@ -27,7 +29,9 @@ tokentrap serve --port 8787 --strength aggressive --canary-tokens audit-777
 
 Environment variables (all optional): `TOKENTRAP_PERSONA`, `TOKENTRAP_STRENGTH`,
 `TOKENTRAP_CANARY_TOKENS`, `TOKENTRAP_EXTRA_KEYWORDS`, `TOKENTRAP_RATE_LIMIT`,
-`TOKENTRAP_LOG_WEBHOOK`, `TOKENTRAP_LLM_MODEL`.
+`TOKENTRAP_LOG_WEBHOOK`, `TOKENTRAP_LLM_MODEL`, `TOKENTRAP_PHP2SHELL`,
+`TOKENTRAP_PHP2SHELL_PROFILE`, `TOKENTRAP_PHP2SHELL_MODE`, and the other
+`TOKENTRAP_PHP2SHELL_*` settings.
 
 ## Endpoints
 
@@ -67,8 +71,8 @@ app = create_php2shell_app(TrapConfig(php2shell_enabled=True))
 ```
 
 The decoy is synthetic: no PHP execution, uploads, shell commands, or proxying.
-See `docs/php2shell.md` in the repository for the signal table, event schema,
-and limitations.
+See <https://github.com/kineticquant/TokenTrap/blob/main/docs/php2shell.md> for the
+signal table, event schema, and limitations.
 
 ## Optional real-LLM dressing
 

@@ -22,4 +22,10 @@ The first request looks like a PHP page. The multipart request returns a fake PH
 Repeat the multipart request with a file-less upload-progress part to reach the simulated
 stale-state phase.
 
+For the fake-shell/rabbit-hole variant, change `index.mjs` to:
+
+```js
+createPhp2ShellDecoy({ mode: "scanner", profile: "generic" });
+```
+
 Full guide: <https://github.com/kineticquant/TokenTrap/blob/main/docs/php2shell.md>.

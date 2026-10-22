@@ -1,12 +1,17 @@
 {
   "name": "tokentrap-ai",
   "version": "1.1.0",
-  "description": "Defensive LLM agent honeypot chat widget - traps nefarious AI agents into burning their own tokens. Client-side, Cloudflare Workers, or full backend.",
+  "description": "Defensive LLM agent honeypot & token tarpit — chat widget, PHP2Shell HTTP decoy, Cloudflare Worker, and Node adapters.",
   "license": "MIT",
   "author": "kineticquant",
+  "homepage": "https://github.com/kineticquant/TokenTrap#readme",
+  "bugs": {
+    "url": "https://github.com/kineticquant/TokenTrap/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kineticquant/TokenTrap.git"
+    "url": "git+https://github.com/kineticquant/TokenTrap.git",
+    "directory": "packages/widget"
   },
   "keywords": [
     "honeypot",

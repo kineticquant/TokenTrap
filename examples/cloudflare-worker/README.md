@@ -26,3 +26,8 @@ npx wrangler pages deploy . --project-name tokentrap-demo
 
 What you gain over level 0: server-side session continuity, structured JSON
 logs (`wrangler tail`), canary-echo detection, and per-IP rate limiting.
+
+To enable the PHP2Shell HTTP decoy on the same Worker, set
+`PHP2SHELL=1` and optionally `PHP2SHELL_MODE=scanner` in
+`packages/worker/wrangler.toml` before deploying. Use a dedicated hostname for
+the catch-all decoy; see `docs/php2shell.md`.

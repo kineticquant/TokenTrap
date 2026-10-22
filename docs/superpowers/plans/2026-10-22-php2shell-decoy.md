@@ -10,6 +10,11 @@
 
 **Spec:** `docs/superpowers/specs/2026-10-22-php2shell-decoy-design.md`
 
+> **Addendum (2026-10-22):** The `scanner` response mode was added after the tasks
+> below. It reuses this plan's detector/session/event layers and adds
+> `packages/widget/src/php2shell/scanner.ts` plus the Python mirror. See
+> `docs/php2shell.md` for the current configuration and event fields.
+
 ## Global Constraints
 
 - No new npm, PyPI, or workspace package. Add subpaths and a binary to `tokentrap-ai`.

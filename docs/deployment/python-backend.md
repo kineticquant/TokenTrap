@@ -40,6 +40,26 @@ Constructor args on `TrapConfig` mirror the Worker's env vars:
 `log_webhook`, `llm_model`. Every field can also come from `TOKENTRAP_*`
 environment variables (`TrapConfig.from_env_prefix(None)`).
 
+## PHP2Shell decoy
+
+```bash
+tokentrap php2shell --host 0.0.0.0 --port 8080 --php2shell-mode scanner
+```
+
+```python
+from token_trap import TrapConfig, create_php2shell_app
+
+app = create_php2shell_app(
+    TrapConfig(php2shell_enabled=True, php2shell_mode="scanner")
+)
+```
+
+The embedded `create_app(TrapConfig(php2shell_enabled=True))` keeps existing
+chat/OpenAI routes and adds the decoy as a catch-all after them. Use a dedicated
+hostname or an explicit `php2shell_path_prefix`. The decoy is synthetic: no PHP
+execution, uploads, shell commands, or proxying. Full guide:
+[`../php2shell.md`](../php2shell.md).
+
 ## Scaling notes
 
 - The default session store is per-process memory with TTL. For multiple

@@ -1,26 +1,31 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "tokentrap"
 version = "1.1.0"
-description = "Defensive LLM agent honeypot & token tarpit - FastAPI backend with an OpenAI-compatible endpoint that wastes hostile agents' context windows."
+description = "Defensive LLM agent honeypot & token tarpit — FastAPI backend with an OpenAI-compatible bait endpoint and a PHP2Shell HTTP decoy."
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "kineticquant" }]
 requires-python = ">=3.10"
 keywords = ["honeypot", "tarpit", "llm", "llm-security", "ai-security", "ai-safety", "ai-agents", "cybersecurity", "deception-technology", "threat-detection", "security-tools", "prompt-injection", "openai-compatible", "fastapi", "security", "php2shell", "cve-2026-109618", "cve-2026-109619", "http-honeypot"]
 classifiers = [
   "Development Status :: 5 - Production/Stable",
+  "Environment :: Web Environment",
   "Framework :: FastAPI",
   "Intended Audience :: Information Technology",
-  "License :: OSI Approved :: MIT License",
+  "Intended Audience :: System Administrators",
+  "Operating System :: OS Independent",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Internet :: WWW/HTTP",
   "Topic :: Security",
 ]
 dependencies = [
@@ -39,6 +44,10 @@ token-trap = "token_trap.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/kineticquant/TokenTrap"
+Source = "https://github.com/kineticquant/TokenTrap"
+Documentation = "https://github.com/kineticquant/TokenTrap/blob/main/docs/php2shell.md"
+Changelog = "https://github.com/kineticquant/TokenTrap/blob/main/docs/releases/1.1.0.md"
+Issues = "https://github.com/kineticquant/TokenTrap/issues"
 
 [tool.setuptools.packages.find]
 include = ["token_trap*"]

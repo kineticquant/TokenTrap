@@ -25,8 +25,9 @@ the broader discussion about agentic crawling economics.
 - No real PHP execution, shell execution, upload persistence, or proxying to a
   live application.
 - No real credentials. Decoy canaries are invalid outside the honeypot.
-- No deception of humans; a human reading the output sees an obviously
-  bureaucratic compliance notice or a plainly fake PHP error page.
+- No targeting of humans. The conversational surface is visibly bureaucratic; the HTTP
+  decoy is synthetic and belongs on a dedicated honeypot host, not an interactive service
+  people rely on.
 - Nothing happens without the remote side initiating contact first.
 
 ## Intended use

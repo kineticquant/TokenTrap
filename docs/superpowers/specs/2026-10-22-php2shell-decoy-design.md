@@ -3,6 +3,10 @@
 - **Date:** 2026-10-22
 - **Status:** Approved for implementation
 - **Feature:** HTTP-layer honeypot and token trap for PHP2Shell exploitation attempts
+- **Addendum (2026-10-22):** An opt-in `scanner` mode was added after the initial
+  implementation. It keeps the same detector/session/event contract and adds a synthetic
+  fake-shell/rabbit-hole response strategy. See `docs/php2shell.md` and
+  `packages/widget/src/php2shell/scanner.ts`.
 - **Packages touched:** `tokentrap-ai` (TypeScript), `tokentrap` (Python)
 - **Related:** [Wiz Research — PHP2Shell](https://www.wiz.io/blog/php2shell-php-rce), [Calif technical write-up](https://calif.io/php2shell/), CVE-2026-109618, CVE-2026-109619
 

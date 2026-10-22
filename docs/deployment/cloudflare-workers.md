@@ -37,6 +37,23 @@ by design.
 | `EXTRA_KEYWORDS` | - | comma-separated extra triggers |
 | `CANARY_TOKENS` | - | comma-separated tokens embedded in payloads |
 | `LOG_WEBHOOK` | - | receives one JSON line per interaction |
+| `PHP2SHELL` | `0` | `1` enables the PHP2Shell HTTP decoy on non-chat paths |
+| `PHP2SHELL_PROFILE` | `generic` | generic / wordpress / drupal / joomla |
+| `PHP2SHELL_MODE` | `tripwire` | tripwire / scanner |
+| `PHP2SHELL_STRENGTH` | `aggressive` | tarpit preset for the decoy |
+| `PHP2SHELL_CANARY_TOKENS` | - | comma-separated decoy canaries |
+| `PHP2SHELL_SCAN_BYTES` | `2097152` | body inspection cap |
+| `PHP2SHELL_PRESSURE_BYTES` | `1048576` | oversized-multipart threshold |
+| `PHP2SHELL_WEBHOOK` | - | receives one JSON event per decoy request |
+
+## PHP2Shell decoy
+
+Set `PHP2SHELL=1` to turn every non-chat path into the PHP2Shell HTTP decoy. The
+health routes and `/api/chat` keep their existing behavior. Use a **dedicated
+Worker hostname**; the catch-all is not meant for a production site's main
+hostname. `PHP2SHELL_MODE=scanner` adds the opt-in fake-shell/rabbit-hole
+strategy. It is synthetic and never executes PHP. Full guide:
+[`../php2shell.md`](../php2shell.md).
 
 ## Point the widget at it
 
