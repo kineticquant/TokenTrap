@@ -233,6 +233,7 @@ def _dot_env(canaries: Sequence[str]) -> str:
 
 def _fake_env(canaries: Sequence[str]) -> str:
     canary = canaries[0] if canaries else "TRAPCANARY-unknown"
+    clean_canary = re.sub(r"[^a-zA-Z0-9]", "", canary)
     lines = [
         "SHELL=/bin/bash",
         "PWD=/var/www/html",
@@ -244,7 +245,7 @@ def _fake_env(canaries: Sequence[str]) -> str:
         "APACHE_RUN_GROUP=www-data",
         f"DB_PASSWORD={canary}",
         f"REDIS_PASSWORD={canary}-redis",
-        f"AWS_SECRET_ACCESS_KEY=TRAPCANARY{re.sub(r'[^a-zA-Z0-9]', '', canary)[-8:]}",
+        f"AWS_SECRET_ACCESS_KEY=TRAPCANARY{clean_canary[-8:]}",
     ]
     for i in range(18):
         lines.append(f"SERVICE_{i}_TOKEN=TRAPCANARY-{i}-{canary[-6:]}")
@@ -278,6 +279,7 @@ def _fake_find() -> str:
 
 def _fake_mysql(canaries: Sequence[str]) -> str:
     canary = canaries[0] if canaries else "TRAPCANARY-unknown"
+    clean_canary = re.sub(r"[^a-zA-Z0-9]", "", canary)
     return "\n".join(
         [
             "Database  Tables",
@@ -302,7 +304,7 @@ def _fake_mysql(canaries: Sequence[str]) -> str:
             "",
             "user_login  user_pass                           user_email",
             "admin       $P$BTRAPCANARYHASH                   admin@example.com",
-            f"wp_user     $P$B{re.sub(r'[^a-zA-Z0-9]', '', canary)[-12:]}  ops@example.com",
+            f"wp_user     $P$B{clean_canary[-12:]}  ops@example.com",
         ]
     )
 
