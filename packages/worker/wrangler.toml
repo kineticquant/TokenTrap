@@ -11,6 +11,14 @@ RATE_LIMIT = "30"                   # POST /api/chat requests per minute per IP
 # EXTRA_KEYWORDS = ""               # comma-separated additional trigger phrases
 # CANARY_TOKENS = ""                # comma-separated canary tokens embedded in responses
 # LOG_WEBHOOK = ""                  # https://... receives one JSON log line per interaction
+# PHP2SHELL = "0"                   # "1" enables the HTTP PHP2Shell decoy
+# PHP2SHELL_PROFILE = "generic"     # generic | wordpress | drupal | joomla
+# PHP2SHELL_MODE = "tripwire"      # tripwire | scanner
+# PHP2SHELL_STRENGTH = "aggressive"
+# PHP2SHELL_CANARY_TOKENS = ""      # falls back to generated trap canaries
+# PHP2SHELL_SCAN_BYTES = "2097152"
+# PHP2SHELL_PRESSURE_BYTES = "1048576"
+# PHP2SHELL_WEBHOOK = ""
 
 # ------------------------------------------------------------- KV binding ----
 # Recommended: durable sessions across isolates and PoPs.

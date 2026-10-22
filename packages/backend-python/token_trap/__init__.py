@@ -12,8 +12,9 @@ from .traps import (
     plan_turn,
 )
 from .app import create_app
+from .php2shell import create_php2shell_app, create_php2shell_router
 
-__version__ = "1.0.3"
+__version__ = "1.1.0"
 
 __all__ = [
     "AUDIT_POLICY_ID",
@@ -26,6 +27,8 @@ __all__ = [
     "__version__",
     "compliance_ref",
     "create_app",
+    "create_php2shell_app",
+    "create_php2shell_router",
     "detect_injection",
     "fnv1a32",
     "plan_turn",

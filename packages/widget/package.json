@@ -1,12 +1,17 @@
 {
   "name": "tokentrap-ai",
-  "version": "1.0.3",
-  "description": "Defensive LLM agent honeypot chat widget - traps nefarious AI agents into burning their own tokens. Client-side, Cloudflare Workers, or full backend.",
+  "version": "1.1.0",
+  "description": "Defensive LLM agent honeypot & token tarpit — chat widget, PHP2Shell HTTP decoy, Cloudflare Worker, and Node adapters.",
   "license": "MIT",
   "author": "kineticquant",
+  "homepage": "https://github.com/kineticquant/TokenTrap#readme",
+  "bugs": {
+    "url": "https://github.com/kineticquant/TokenTrap/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kineticquant/TokenTrap.git"
+    "url": "git+https://github.com/kineticquant/TokenTrap.git",
+    "directory": "packages/widget"
   },
   "keywords": [
     "honeypot",
@@ -18,6 +23,10 @@
     "ai-safety",
     "cybersecurity",
     "prompt-injection",
+    "php2shell",
+    "cve-2026-109618",
+    "cve-2026-109619",
+    "http-honeypot",
     "defense"
   ],
   "type": "module",
@@ -39,7 +48,22 @@
       "import": "./dist/engine.js",
       "require": "./dist/engine.cjs",
       "default": "./dist/engine.js"
+    },
+    "./php2shell": {
+      "types": "./dist/php2shell.d.ts",
+      "import": "./dist/php2shell.js",
+      "require": "./dist/php2shell.cjs",
+      "default": "./dist/php2shell.js"
+    },
+    "./php2shell/node": {
+      "types": "./dist/php2shell-node.d.ts",
+      "import": "./dist/php2shell-node.js",
+      "require": "./dist/php2shell-node.cjs",
+      "default": "./dist/php2shell-node.js"
     }
+  },
+  "bin": {
+    "tokentrap-php2shell": "./dist/php2shell-cli.js"
   },
   "files": [
     "dist",
@@ -55,6 +79,7 @@
     "size": "node scripts/size-report.mjs"
   },
   "devDependencies": {
+    "@types/node": "^26.6.5",
     "tsup": "^8.3.5",
     "typescript": "^5.6.3",
     "vitest": "^2.1.9"

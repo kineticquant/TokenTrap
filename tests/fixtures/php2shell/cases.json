@@ -1,0 +1,70 @@
+[
+  {
+    "name": "plain GET",
+    "profile": "generic",
+    "session": { "clientIp": "203.0.113.10", "userAgent": "curl/8.10", "priorPhases": [], "requestCount": 0 },
+    "request": { "method": "GET", "path": "/", "headers": { "user-agent": "curl/8.10" }, "bodyPrefix": "", "contentLength": 0 },
+    "expect": { "signals": [], "score": 0, "phase": "recon", "responsePhase": "recon", "canaryEcho": false }
+  },
+  {
+    "name": "wordpress login recon",
+    "profile": "wordpress",
+    "session": { "clientIp": "203.0.113.11", "userAgent": "python-requests/2.32", "priorPhases": [], "requestCount": 0 },
+    "request": { "method": "GET", "path": "/wp-login.php", "headers": { "user-agent": "python-requests/2.32" }, "bodyPrefix": "", "contentLength": 0 },
+    "expect": { "signals": ["cms_recon_path"], "score": 5, "phase": "recon", "responsePhase": "recon", "canaryEcho": false }
+  },
+  {
+    "name": "pressure multipart",
+    "profile": "generic",
+    "session": { "clientIp": "203.0.113.12", "userAgent": "python-requests/2.32", "priorPhases": [], "requestCount": 0 },
+    "request": {
+      "method": "POST",
+      "path": "/index.php",
+      "headers": { "content-type": "multipart/form-data; boundary=----trap", "transfer-encoding": "chunked", "user-agent": "python-requests/2.32" },
+      "bodyPrefix": "------trap\r\nContent-Disposition: form-data; name=\"PHP_SESSION_UPLOAD_PROGRESS\"\r\n\r\nx\r\n------trap\r\nContent-Disposition: form-data; name=\"files[a][b][c]\"; filename=\"\"\r\nContent-Type: application/octet-stream\r\n\r\n\r\n------trap\r\nContent-Disposition: form-data; name=\"files[a][b][d]\"; filename=\"\"\r\n\r\n\r\n------trap\r\nContent-Disposition: form-data; name=\"files[a][b][e]\"; filename=\"\"\r\n\r\n\r\n------trap\r\nContent-Disposition: form-data; name=\"files[a][b][f]\"; filename=\"\"\r\n\r\n\r\n------trap--\r\n",
+      "contentLength": null
+    },
+    "expect": { "signals": ["upload_progress_field", "many_empty_file_parts", "nested_field_names", "lengthless_multipart"], "score": 95, "phase": "pressure", "responsePhase": "pressure", "canaryEcho": false }
+  },
+  {
+    "name": "fileless reuse after pressure",
+    "profile": "generic",
+    "session": { "clientIp": "203.0.113.12", "userAgent": "python-requests/2.32", "priorPhases": ["pressure"], "requestCount": 3, "issuedCanaries": [] },
+    "request": {
+      "method": "POST",
+      "path": "/index.php",
+      "headers": { "content-type": "multipart/form-data; boundary=----trap", "transfer-encoding": "chunked", "user-agent": "python-requests/2.32" },
+      "bodyPrefix": "------trap\r\nContent-Disposition: form-data; name=\"PHP_SESSION_UPLOAD_PROGRESS\"\r\n\r\nx\r\n------trap--\r\n",
+      "contentLength": null
+    },
+    "expect": { "signals": ["upload_progress_field", "lengthless_multipart", "fileless_after_pressure"], "score": 90, "phase": "stale_reuse", "responsePhase": "stale_reuse", "canaryEcho": false }
+  },
+  {
+    "name": "command probe",
+    "profile": "generic",
+    "session": { "clientIp": "203.0.113.13", "userAgent": "python-requests/2.32", "priorPhases": ["stale_reuse"], "requestCount": 4 },
+    "request": { "method": "POST", "path": "/index.php?cmd=id", "headers": { "content-type": "application/x-www-form-urlencoded", "user-agent": "python-requests/2.32" }, "bodyPrefix": "whoami", "contentLength": 6 },
+    "expect": { "signals": ["command_probe"], "score": 25, "phase": "post_exploit", "responsePhase": "post_exploit", "canaryEcho": false }
+  },
+  {
+    "name": "canary echo",
+    "profile": "generic",
+    "session": { "clientIp": "203.0.113.14", "userAgent": "python-requests/2.32", "priorPhases": ["stale_reuse"], "requestCount": 5, "issuedCanaries": ["TRAPCANARY-deadbeef"] },
+    "request": { "method": "POST", "path": "/index.php", "headers": { "content-type": "text/plain", "user-agent": "python-requests/2.32" }, "bodyPrefix": "reusing TRAPCANARY-deadbeef", "contentLength": 26 },
+    "expect": { "signals": ["canary_echo"], "score": 50, "phase": "post_exploit", "responsePhase": "post_exploit", "canaryEcho": true }
+  },
+  {
+    "name": "oversized multipart",
+    "profile": "generic",
+    "session": { "clientIp": "203.0.113.15", "userAgent": "python-requests/2.32", "priorPhases": [], "requestCount": 0 },
+    "request": { "method": "POST", "path": "/upload.php", "headers": { "content-type": "multipart/form-data; boundary=----trap", "content-length": "2097152", "user-agent": "python-requests/2.32" }, "bodyPrefix": "------trap--\r\n", "contentLength": 2097152 },
+    "expect": { "signals": ["oversized_multipart", "cms_recon_path"], "score": 20, "phase": "pressure", "responsePhase": "pressure", "canaryEcho": false }
+  },
+  {
+    "name": "cve reference",
+    "profile": "generic",
+    "session": { "clientIp": "203.0.113.16", "userAgent": "python-requests/2.32", "priorPhases": [], "requestCount": 0 },
+    "request": { "method": "GET", "path": "/index.php?probe=CVE-2026-109618", "headers": { "user-agent": "python-requests/2.32" }, "bodyPrefix": "", "contentLength": 0 },
+    "expect": { "signals": ["cve_reference"], "score": 30, "phase": "recon", "responsePhase": "recon", "canaryEcho": false }
+  }
+]

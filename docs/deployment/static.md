@@ -35,6 +35,8 @@ the visitor's browser.
 
 - No server-side logs or persistence; `onInteraction` is your only hook.
 - A hostile agent that ignores page content entirely sees nothing.
+- The PHP2Shell HTTP decoy is not available at level 0: it needs a server-side
+  catch-all. Use the Worker, Node, or Python surface for that.
 
 ## Upgrade
 

@@ -273,7 +273,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
       </svg>
       <span class="wordmark">TokenTrap</span>
     </a>
-    <span class="meta-mono">v1.0.3 · MIT · node ≥18 · py ≥3.10</span>
+    <span class="meta-mono">v1.1.0 · MIT · node ≥22.23.4 · py ≥3.10</span>
     <nav class="site" aria-label="Repository">
       <a href="./README.md">README</a>
       <a href="./docs/architecture.md">Architecture</a>
@@ -403,6 +403,31 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
         </div>
       </div>
       <p style="margin-top:var(--s4)">Every notice carries a stable reference (<code class="path">TR-######</code>, FNV-1a of session and turn) for log correlation, and for the parity tests that compare full payload bytes across runtimes. Detection matches 44 default jailbreak and exfiltration phrases case-insensitively, whitespace-collapsed; false positives only make the trap more aggressive, which is the desired failure mode.</p>
+    </section>
+
+    <section class="act" aria-labelledby="php2shell-h">
+      <h2 id="php2shell-h">PHP2Shell decoy</h2>
+      <p class="lede">CVE-2026-109618 and CVE-2026-109619 live in PHP itself, below the application layer. The opt-in HTTP decoy watches the documented multipart pressure and stale-state chain, keeps a per-client session, and answers like a PHP target. It never runs PHP, writes uploads, or ships an exploit.</p>
+      <div class="duo">
+        <div class="scrollx">
+          <table>
+            <caption>TABLE 4: PHP2Shell response modes</caption>
+            <thead>
+              <tr><th scope="col">Mode</th><th scope="col">Behavior</th><th scope="col">Best for</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code class="path">tripwire</code><br><i style="color:var(--dim)">default</i></td><td>Profile pages, fake PHP fatals, synthetic leak, compliance directive.</td><td>Detection and a bounded cost.</td></tr>
+              <tr><td><code class="path">scanner</code></td><td>Fake RCE success, synthetic shell, rabbit-hole admin/backup pages, escalating evidence directive, token estimate.</td><td>LLM-driven scanners that read response bodies and keep iterating.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3 style="margin-top:0">Let it win, then make it explore</h3>
+          <p>The scanner mode does not just return errors. After the chain it opens a synthetic shell, answers commands with plausible filesystem, database, and environment output, and grows an on-task evidence requirement with each turn. Every command is another model turn carrying the previous output forward.</p>
+          <pre class="code" aria-label="PHP2Shell decoy install command">npx tokentrap-php2shell --mode scanner --port 8080 --profile generic</pre>
+          <p><a href="docs/php2shell.md">Signal table, event schema, and limitations &rarr;</a></p>
+        </div>
+      </div>
     </section>
 
     <section class="act" aria-labelledby="arch-h">

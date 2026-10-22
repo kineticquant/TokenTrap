@@ -85,7 +85,7 @@ def create_app(config: Optional[TrapConfig] = None) -> FastAPI:
 
     app = FastAPI(
         title="TokenTrap",
-        version="1.0.3",
+        version="1.1.0",
         description="Defensive LLM agent honeypot. Do not point real users here.",
         docs_url=None,
         redoc_url=None,
@@ -287,5 +287,10 @@ def create_app(config: Optional[TrapConfig] = None) -> FastAPI:
     async def unhandled(request: Request, exc: Exception) -> JSONResponse:  # pragma: no cover
         logger.error("unhandled error", exc_info=exc)
         return JSONResponse({"error": "internal error"}, status_code=500)
+
+    if cfg.php2shell_enabled:
+        from .php2shell.router import create_php2shell_router
+
+        app.include_router(create_php2shell_router(cfg))
 
     return app

@@ -7,6 +7,8 @@ every JS runtime in the project.
 > exploits, no outbound traffic, no human deception. Operators are solely
 > responsible for lawful use in their jurisdiction. See
 > <https://github.com/kineticquant/TokenTrap/blob/main/docs/ethics-and-legal.md>.
+>
+> **Release notes:** <https://github.com/kineticquant/TokenTrap/blob/main/docs/releases/1.1.0.md>
 
 ## Install
 
@@ -67,6 +69,29 @@ const { reply, meta } = engine.handle("hello");
 ```
 
 No DOM, no I/O - the exact logic the Cloudflare Worker bundles.
+
+## PHP2Shell HTTP decoy
+
+```ts
+import { createPhp2ShellDecoy } from "tokentrap-ai/php2shell";
+import { toNodeHandler } from "tokentrap-ai/php2shell/node";
+
+const decoy = createPhp2ShellDecoy({ profile: "generic" });
+// scanner tarpit mode:
+// createPhp2ShellDecoy({ profile: "generic", mode: "scanner" })
+// createServer(toNodeHandler(decoy)).listen(8080)
+```
+
+Or run the standalone binary:
+
+```bash
+npx tokentrap-php2shell --port 8080 --profile wordpress
+npx tokentrap-php2shell --mode scanner --port 8080 --profile wordpress
+```
+
+The decoy is a separate opt-in surface; it does not change the chat engine. See
+<https://github.com/kineticquant/TokenTrap/blob/main/docs/php2shell.md> and the
+<https://github.com/kineticquant/TokenTrap/blob/main/docs/releases/1.1.0.md> release notes.
 
 ## Build targets
 

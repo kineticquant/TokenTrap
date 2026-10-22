@@ -6,7 +6,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![npm](https://img.shields.io/npm/v/tokentrap-ai)](https://www.npmjs.com/package/tokentrap-ai)
 [![PyPI](https://img.shields.io/pypi/v/tokentrap)](https://pypi.org/project/tokentrap/)
-[![Node](https://img.shields.io/badge/node-%E2%89%A518-blue)](package.json)
+[![Node](https://img.shields.io/badge/node-%E2%89%A522.23.4-blue)](package.json)
 
 > Malicious AI agents probe and prompt-inject their way across the web.
 > TokenTrap invites them in - and then makes every conversation they start
@@ -96,7 +96,7 @@ Full mechanics: [`docs/how-the-trap-works.md`](docs/how-the-trap-works.md).
 | Package | `tokentrap-ai` | worker template | `tokentrap` (PyPI) |
 | Sessions | browser memory | KV (optional) | TTL store (+ Redis-ready) |
 | Logging | `onInteraction` callback | JSON logs + webhook + R2 | JSON logs + webhook |
-| Extras | - | canaries, rate limit, CORS | OpenAI bait endpoint, CLI, optional real LLM |
+| Extras | - | PHP2Shell decoy, canaries, rate limit, CORS | OpenAI bait endpoint, PHP2Shell decoy, CLI, optional real LLM |
 
 Upgrade path:
 
@@ -108,6 +108,32 @@ TokenTrap.init({
   // apiEndpoint: "https://api.your-domain.com",                // level 2
 });
 ```
+
+## PHP2Shell decoy (CVE-2026-109618 / CVE-2026-109619)
+
+TokenTrap now includes an opt-in **HTTP decoy** for agents probing the PHP2Shell request
+chain. It impersonates a PHP application, detects multipart upload-progress pressure and
+cross-request stale-state patterns, correlates the chain into one session, returns
+near-miss PHP errors, and embeds the token-trap directive in high-confidence responses. It
+does not run PHP, ship an exploit, or write uploads.
+
+```bash
+npx tokentrap-php2shell --port 8080 --profile generic
+npx tokentrap-php2shell --mode scanner --port 8080 --profile generic
+tokentrap php2shell --port 8080 --profile wordpress
+tokentrap php2shell --php2shell-mode scanner --port 8080 --profile wordpress
+```
+
+`tripwire` (default) detects and returns plausible PHP failures. `scanner` waits for the
+high-confidence chain, then opens a synthetic shell/rabbit hole so an LLM-driven scanner
+keeps spending turns exploring a fake system. Both are synthetic and opt-in.
+
+It is also available as `tokentrap-ai/php2shell` (Web handler),
+`tokentrap-ai/php2shell/node` (Node/Express/Next), a Worker env flag (`PHP2SHELL=1`), and a
+FastAPI router. Full guide, signal table, event schema, and limitations:
+[`docs/php2shell.md`](docs/php2shell.md).
+
+**Patch PHP first.** The decoy is detection and deception, not remediation.
 
 ## Quick starts
 
@@ -150,7 +176,7 @@ tokentrap serve --port 8787 --canary-tokens prod-canary-1
 
 ```
 packages/        widget · cloudflare worker · python backend
-examples/        static-html · pages · worker · react · nextjs · cdn · fastapi · full-stack
+examples/        static-html · pages · worker · react · nextjs · cdn · fastapi · full-stack · php2shell-node
 docs/            architecture · trap mechanics · deployment guides · research · ethics
 tests/           cross-package integration, e2e harness, TS↔PY parity suite
 research/        working notes
@@ -158,7 +184,7 @@ research/        working notes
 
 ## Development
 
-Requirements: Node ≥ 18, Python ≥ 3.10.
+Requirements: Node ≥ 22.23.4, Python ≥ 3.10.
 
 ```bash
 npm install                     # workspaces
@@ -170,6 +196,7 @@ pwsh tests/run-all.ps1          # everything incl. e2e + parity (or tests/run-al
 ## Documentation
 
 - [Repository overview (visual)](OVERVIEW.html) · [Architecture](docs/architecture.md) · [How the trap works](docs/how-the-trap-works.md)
+- [PHP2Shell decoy](docs/php2shell.md) · [Release notes 1.1.0](docs/releases/1.1.0.md) · [Changelog](CHANGELOG.md)
 - [Deployment: static](docs/deployment/static.md) · [Workers](docs/deployment/cloudflare-workers.md) · [Python](docs/deployment/python-backend.md)
 - [Customization](docs/customization.md) · [Research background](docs/research-background.md) · [Ethics & legal](docs/ethics-and-legal.md)
 

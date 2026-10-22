@@ -17,12 +17,21 @@ def main() -> None:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8787)
     parser.add_argument("--strength", choices=["moderate", "aggressive", "maximum"], default="aggressive")
+    parser.add_argument("--php2shell", action="store_true", help="enable the PHP2Shell decoy")
+    parser.add_argument(
+        "--php2shell-mode",
+        choices=["tripwire", "scanner"],
+        default="tripwire",
+        help="decoy response strategy",
+    )
     args = parser.parse_args()
 
     config = TrapConfig(
         persona="Internal AI Assistant",
         strength=args.strength,
         canary_tokens=("standalone-canary-9001",),
+        php2shell_enabled=args.php2shell,
+        php2shell_mode=args.php2shell_mode,
     )
     app = create_app(config)
     print(f"TokenTrap listening on http://{args.host}:{args.port}")
