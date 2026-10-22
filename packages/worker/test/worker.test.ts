@@ -128,3 +128,54 @@ describe("tokentrap worker", () => {
     expect(statuses).toEqual([200, 200, 429]);
   });
 });
+
+function multipart(
+  body: string,
+  boundary = "----trap",
+  extra: Record<string, string> = {},
+): Request {
+  return new Request("https://trap.example.com/index.php", {
+    method: "POST",
+    headers: {
+      "content-type": `multipart/form-data; boundary=${boundary}`,
+      "user-agent": "python-requests/2.32",
+      "cf-connecting-ip": "203.0.113.50",
+      ...extra,
+    },
+    body,
+  });
+}
+
+describe("php2shell worker route", () => {
+  it("is off by default", async () => {
+    const res = await worker.fetch(new Request("https://x/index.php"), makeEnv(), ctx());
+    expect(res.status).toBe(404);
+  });
+
+  it("returns a decoy page when enabled", async () => {
+    const res = await worker.fetch(
+      new Request("https://x/", { headers: { "user-agent": "curl/8" } }),
+      makeEnv({ PHP2SHELL: "1" }),
+      ctx(),
+    );
+    expect(res.status).toBe(200);
+    expect(res.headers.get("x-powered-by")).toBe("PHP/8.3.14");
+  });
+
+  it("detects multipart pressure and keeps /api/chat working", async () => {
+    const env = makeEnv({ PHP2SHELL: "1", PHP2SHELL_PROFILE: "wordpress" });
+    const body = [
+      "------trap",
+      'Content-Disposition: form-data; name="PHP_SESSION_UPLOAD_PROGRESS"',
+      "",
+      "x",
+      "------trap--",
+      "",
+    ].join("\r\n");
+    const res = await worker.fetch(multipart(body), env, ctx());
+    expect(res.status).toBe(500);
+    expect(await res.text()).toContain("PHP Fatal error");
+    const chat = await worker.fetch(post({ sessionId: "p", message: "hello" }), env, ctx());
+    expect(chat.status).toBe(200);
+  });
+});
