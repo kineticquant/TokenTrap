@@ -3,20 +3,19 @@
 from __future__ import annotations
 
 import hashlib
-import json
 import re
 import time
 from typing import Any, Callable, Dict, Optional
 
 from fastapi import APIRouter, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, Response
+from fastapi.responses import Response
 
 from ..logging import get_logger, post_webhook
 from ..session import SlidingWindowRateLimiter
 from ..traps import fnv1a32
 from .detector import detect_php2shell, scan_multipart
-from .responses import build_response, profile_page
+from .responses import build_response
 from .state import InMemoryPhp2ShellStore, apply_detection, session_key
 from .types import RequestInfo
 
@@ -73,16 +72,6 @@ async def _read_prefix(request: Request, limit: int) -> tuple[bytes, bool]:
 
 def _preview(body: str, limit: int) -> str:
     return _REDACT_RE.sub(r"\1=[redacted]", body)[:limit]
-
-
-def _tier_for(score: int) -> str:
-    if score >= 85:
-        return "active_chain"
-    if score >= 60:
-        return "likely"
-    if score >= 30:
-        return "suspicious"
-    return "observe"
 
 
 def _log_event(config: Any, event: dict, on_event: Optional[Callable[[dict], None]]) -> None:
@@ -197,7 +186,6 @@ def create_php2shell_router(
     max_scan = getattr(config, "php2shell_max_scan_bytes", 2 * 1024 * 1024)
     pressure = getattr(config, "php2shell_pressure_bytes", 1024 * 1024)
     preview_limit = getattr(config, "php2shell_max_preview_bytes", 2048)
-    strength = getattr(config, "php2shell_strength", "aggressive")
     canaries = tuple(getattr(config, "php2shell_canary_tokens", ()) or ())
 
     async def handle(request: Request) -> Response:
@@ -266,6 +254,8 @@ def create_php2shell_router(
     router.add_api_route(route_path, handle, methods=_METHODS)
     if prefix:
         router.add_api_route(prefix, handle, methods=_METHODS)
+    else:
+        router.add_api_route("/", handle, methods=_METHODS)
     return router
 
 
@@ -283,21 +273,6 @@ def create_php2shell_app(config: Any) -> FastAPI:
         allow_methods=["GET", "POST", "OPTIONS"],
         allow_headers=["*"],
     )
-
-    prefix = str(getattr(config, "php2shell_path_prefix", "") or "").rstrip("/")
-    if not prefix:
-
-        @app.get("/")
-        async def root() -> HTMLResponse:
-            return HTMLResponse(
-                profile_page(getattr(config, "php2shell_profile", "generic"), "/"),
-                headers={
-                    "x-powered-by": "PHP/8.3.14",
-                    "server": "Apache/2.4.62 (Debian)",
-                    "cache-control": "no-store, no-cache, must-revalidate",
-                    "set-cookie": "PHPSESSID=root; Path=/; HttpOnly; SameSite=Lax",
-                },
-            )
 
     app.include_router(create_php2shell_router(config))
     return app
