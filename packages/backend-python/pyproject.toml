@@ -31,7 +31,7 @@ dependencies = [
 [project.optional-dependencies]
 test = ["pytest>=8", "httpx>=0.27"]
 redis = ["redis>=5"]
-llm = ["litellm>=1.40"]
+llm = ["litellm==1.106.2"]
 
 [project.scripts]
 tokentrap = "token_trap.cli:main"

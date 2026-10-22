@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22.23.4
           cache: npm
       # Build must precede typecheck: the worker's types resolve through the
       # widget's dist/ declarations.
@@ -33,6 +33,10 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Upgrade pip and certifi
+        run: |
+          python -m pip install "pip @ https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl#sha256=fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70"
+          python -m pip install "certifi==2026.10.19"
       - run: pip install -e "packages/backend-python[test]"
       - run: python -m pytest packages/backend-python -q
 
@@ -44,10 +48,14 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22.23.4
           cache: npm
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
+      - name: Upgrade pip and certifi
+        run: |
+          python -m pip install "pip @ https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl#sha256=fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70"
+          python -m pip install "certifi==2026.10.19"
       - run: npm install --no-audit --no-fund
       - run: bash tests/run-all.sh

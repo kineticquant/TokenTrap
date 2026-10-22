@@ -22,3 +22,6 @@ tests/.out/
 *.log
 .DS_Store
 Thumbs.db
+
+# local marketing/demo renders - never commit
+demo-video/
