@@ -119,8 +119,14 @@ does not run PHP, ship an exploit, or write uploads.
 
 ```bash
 npx tokentrap-php2shell --port 8080 --profile generic
+npx tokentrap-php2shell --mode scanner --port 8080 --profile generic
 tokentrap php2shell --port 8080 --profile wordpress
+tokentrap php2shell --php2shell-mode scanner --port 8080 --profile wordpress
 ```
+
+`tripwire` (default) detects and returns plausible PHP failures. `scanner` waits for the
+high-confidence chain, then opens a synthetic shell/rabbit hole so an LLM-driven scanner
+keeps spending turns exploring a fake system. Both are synthetic and opt-in.
 
 It is also available as `tokentrap-ai/php2shell` (Web handler),
 `tokentrap-ai/php2shell/node` (Node/Express/Next), a Worker env flag (`PHP2SHELL=1`), and a

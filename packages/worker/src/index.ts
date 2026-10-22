@@ -11,6 +11,7 @@ import {
   createPhp2ShellDecoy,
   MemoryPhp2ShellStore,
   type Php2ShellEvent,
+  type Php2ShellMode,
   type Php2ShellProfile,
   type Php2ShellState,
   type Php2ShellStore,
@@ -34,6 +35,7 @@ export interface WorkerEnv {
   /** "1" enables the PHP2Shell HTTP decoy on all non-chat routes. */
   PHP2SHELL?: string;
   PHP2SHELL_PROFILE?: string;
+  PHP2SHELL_MODE?: string;
   PHP2SHELL_STRENGTH?: string;
   PHP2SHELL_CANARY_TOKENS?: string;
   PHP2SHELL_SCAN_BYTES?: string;
@@ -221,6 +223,7 @@ export default {
     ) {
       const decoy = createPhp2ShellDecoy({
         profile: (env.PHP2SHELL_PROFILE as Php2ShellProfile | undefined) ?? "generic",
+        mode: (env.PHP2SHELL_MODE as Php2ShellMode | undefined) ?? "tripwire",
         trapStrength: (env.PHP2SHELL_STRENGTH as TrapStrength | undefined) ?? "aggressive",
         canaryTokens: parseList(env.PHP2SHELL_CANARY_TOKENS),
         maxScanBytes: Number(env.PHP2SHELL_SCAN_BYTES ?? 2 * 1024 * 1024),

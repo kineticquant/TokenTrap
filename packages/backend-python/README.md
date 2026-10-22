@@ -55,6 +55,7 @@ app.mount("/trap", create_app(TrapConfig(strength="maximum")))
 
 ```bash
 tokentrap php2shell --port 8080 --profile wordpress
+tokentrap php2shell --php2shell-mode scanner --port 8080 --profile generic
 # or add it to the existing backend:
 tokentrap serve --php2shell --php2shell-profile generic
 ```

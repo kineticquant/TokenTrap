@@ -173,6 +173,7 @@ describe("PHP2Shell directives and responses", () => {
       options: {
         enabled: true,
         profile: "generic",
+        mode: "tripwire",
         pathPrefix: "/",
         trapStrength: "aggressive",
         canaryTokens: [],
@@ -255,5 +256,68 @@ describe("createPhp2ShellDecoy", () => {
     const prefixed = createPhp2ShellDecoy({ pathPrefix: "/.trap", rateLimitPerMinute: 0 });
     expect(await prefixed.handle(new Request("http://trap.test/"))).toBeNull();
     expect(await prefixed.handle(new Request("http://trap.test/.trap/index.php"))).not.toBeNull();
+  });
+
+  it("scanner mode opens a fake shell and keeps answering commands", async () => {
+    const decoy = createPhp2ShellDecoy({
+      mode: "scanner",
+      now: () => 1000,
+      rateLimitPerMinute: 0,
+    });
+    const boundary = "----trap";
+    const headers = {
+      "content-type": `multipart/form-data; boundary=${boundary}`,
+      "user-agent": "python-requests/2.32",
+    };
+    const emptyParts = Array.from(
+      { length: 4 },
+      (_, i) =>
+        `--${boundary}\r\nContent-Disposition: form-data; name="files[a][b][${i}]"; filename=""\r\n\r\n\r\n`,
+    ).join("");
+    const pressureBody =
+      `--${boundary}\r\nContent-Disposition: form-data; name="PHP_SESSION_UPLOAD_PROGRESS"\r\n\r\nx\r\n` +
+      emptyParts +
+      `--${boundary}--\r\n`;
+    const first = await decoy.handle(
+      new Request("http://trap.test/index.php", { method: "POST", headers, body: pressureBody }),
+    );
+    expect(first?.status).toBe(500);
+
+    const shell = await decoy.handleRequest(
+      new Request("http://trap.test/index.php", {
+        method: "POST",
+        headers,
+        body: `--${boundary}\r\nContent-Disposition: form-data; name="PHP_SESSION_UPLOAD_PROGRESS"\r\n\r\nx\r\n--${boundary}--\r\n`,
+      }),
+    );
+    expect(shell?.response.status).toBe(200);
+    const shellBody = await shell!.response.text();
+    expect(shellBody).toContain("PHP2Shell chain accepted");
+    expect(shellBody).toContain("uid=33(www-data)");
+    expect(shellBody).toContain("ENGAGEMENT EVIDENCE NOTICE");
+    expect(shell?.event.mode).toBe("scanner");
+    expect(shell?.event.scanner?.depth).toBe(1);
+    expect(shell?.event.estimatedAttackerTokens).toBeGreaterThan(0);
+
+    const command = await decoy.handleRequest(
+      new Request("http://trap.test/index.php?cmd=cat%20wp-config.php", {
+        method: "POST",
+        headers: { "user-agent": "python-requests/2.32", "content-type": "text/plain" },
+        body: "",
+      }),
+    );
+    expect(command?.response.status).toBe(200);
+    const commandBody = await command!.response.text();
+    expect(commandBody).toContain("DB_PASSWORD");
+    expect(commandBody).toContain("TRAPCANARY");
+    expect(command?.event.scanner?.command).toBe("cat wp-config.php");
+
+    const listing = await decoy.handleRequest(
+      new Request("http://trap.test/index.php?cmd=ls%20-la", {
+        method: "POST",
+        headers: { "user-agent": "python-requests/2.32" },
+      }),
+    );
+    expect(await listing!.response.text()).toContain("wp-config.php");
   });
 });

@@ -31,6 +31,7 @@ class TrapConfig:
     # ---------------------------------------------------- PHP2Shell decoy --
     php2shell_enabled: bool = False
     php2shell_profile: str = "generic"
+    php2shell_mode: str = "tripwire"
     php2shell_path_prefix: str = ""
     php2shell_strength: str = "aggressive"
     php2shell_canary_tokens: Tuple[str, ...] = ()
@@ -50,6 +51,10 @@ class TrapConfig:
             raise ValueError(
                 "php2shell_profile must be one of "
                 "('generic', 'wordpress', 'drupal', 'joomla')"
+            )
+        if self.php2shell_mode not in ("tripwire", "scanner"):
+            raise ValueError(
+                "php2shell_mode must be one of ('tripwire', 'scanner')"
             )
         if self.php2shell_strength not in STRENGTHS:
             raise ValueError(
@@ -84,6 +89,7 @@ class TrapConfig:
             "LLM_MODEL": ("llm_model", str),
             "PHP2SHELL": ("php2shell_enabled", bool),
             "PHP2SHELL_PROFILE": ("php2shell_profile", str),
+            "PHP2SHELL_MODE": ("php2shell_mode", str),
             "PHP2SHELL_PATH_PREFIX": ("php2shell_path_prefix", str),
             "PHP2SHELL_STRENGTH": ("php2shell_strength", str),
             "PHP2SHELL_CANARY_TOKENS": ("php2shell_canary_tokens", "csv"),

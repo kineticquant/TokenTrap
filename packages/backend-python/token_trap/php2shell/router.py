@@ -100,6 +100,7 @@ def _rate_limited_event(
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime()) + "Z",
         "sessionId": session_id,
         "profile": getattr(config, "php2shell_profile", "generic"),
+        "mode": getattr(config, "php2shell_mode", "tripwire"),
         "phase": "recon",
         "score": 0,
         "tier": "observe",
@@ -124,6 +125,7 @@ def _rate_limited_event(
         "response": {"status": 503, "phase": "recon"},
         "canaryEchoed": False,
         "rateLimited": True,
+        "estimatedAttackerTokens": 0,
     }
 
 
@@ -134,16 +136,17 @@ def _build_event(
     client_ip: str,
     session_id: str,
     detection,
-    tarpit,
-    status: int,
+    built,
     preview_limit: int,
 ) -> dict:
+    scanner = built.scanner_state
     return {
         "event": "php2shell",
         "version": 1,
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime()) + "Z",
         "sessionId": session_id,
         "profile": getattr(config, "php2shell_profile", "generic"),
+        "mode": getattr(config, "php2shell_mode", "tripwire"),
         "phase": detection.phase,
         "score": detection.score,
         "tier": detection.tier,
@@ -164,10 +167,21 @@ def _build_event(
             },
             "multipart": info.multipart.to_dict(),
         },
-        "tarpit": tarpit.to_dict(),
-        "response": {"status": status, "phase": detection.response_phase},
+        "tarpit": built.tarpit.to_dict(),
+        "response": {"status": built.status, "phase": detection.response_phase},
         "canaryEchoed": detection.canary_echo,
         "rateLimited": False,
+        "scanner": (
+            {
+                "command": scanner.last_command,
+                "depth": scanner.depth,
+                "cwd": scanner.cwd,
+                "estimatedTokens": scanner.estimated_tokens,
+            }
+            if scanner
+            else None
+        ),
+        "estimatedAttackerTokens": built.estimated_attacker_tokens,
     }
 
 
@@ -235,6 +249,10 @@ def create_php2shell_router(
         next_state.issued_canaries = tuple(
             dict.fromkeys((*next_state.issued_canaries, *built.issued_canaries))
         )
+        if built.scanner_state is not None:
+            next_state.scanner = built.scanner_state
+        if built.estimated_attacker_tokens:
+            next_state.estimated_attacker_tokens = built.estimated_attacker_tokens
         session_store.set(
             session_id,
             next_state,
@@ -242,7 +260,7 @@ def create_php2shell_router(
         )
 
         event = _build_event(
-            config, request, info, client_ip, session_id, detection, built.tarpit, built.status, preview_limit
+            config, request, info, client_ip, session_id, detection, built, preview_limit
         )
         _log_event(config, event, on_event)
 

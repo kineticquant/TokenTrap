@@ -26,6 +26,8 @@ def initial_state(session_id: str, now: float) -> Php2ShellState:
         upload_progress_seen=False,
         issued_canaries=(),
         canary_echoed=False,
+        scanner=None,
+        estimated_attacker_tokens=0,
     )
 
 
@@ -47,6 +49,8 @@ def apply_detection(
         or "upload_progress_field" in detection.signals,
         issued_canaries=tuple(state.issued_canaries),
         canary_echoed=state.canary_echoed or detection.canary_echo,
+        scanner=state.scanner,
+        estimated_attacker_tokens=state.estimated_attacker_tokens,
     )
 
 

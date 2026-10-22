@@ -57,6 +57,7 @@ import { createPhp2ShellDecoy } from "tokentrap-ai/php2shell";
 
 const decoy = createPhp2ShellDecoy({
   profile: "wordpress",        // generic | wordpress | drupal | joomla
+  mode: "tripwire",            // tripwire | scanner
   pathPrefix: "/",
   trapStrength: "aggressive",
   canaryTokens: ["audit-777"],
@@ -67,14 +68,14 @@ const decoy = createPhp2ShellDecoy({
 });
 ```
 
-Worker env: `PHP2SHELL=1`, `PHP2SHELL_PROFILE`, `PHP2SHELL_STRENGTH`,
-`PHP2SHELL_CANARY_TOKENS`, `PHP2SHELL_SCAN_BYTES`, `PHP2SHELL_PRESSURE_BYTES`,
-`PHP2SHELL_WEBHOOK`.
+Worker env: `PHP2SHELL=1`, `PHP2SHELL_PROFILE`, `PHP2SHELL_MODE`,
+`PHP2SHELL_STRENGTH`, `PHP2SHELL_CANARY_TOKENS`, `PHP2SHELL_SCAN_BYTES`,
+`PHP2SHELL_PRESSURE_BYTES`, `PHP2SHELL_WEBHOOK`.
 
-Python: `php2shell_enabled`, `php2shell_profile`, `php2shell_path_prefix`,
-`php2shell_strength`, `php2shell_canary_tokens`, `php2shell_max_scan_bytes`,
-`php2shell_pressure_bytes`, `php2shell_session_ttl_seconds`,
-`php2shell_rate_limit_per_minute`, `php2shell_max_preview_bytes`,
-`php2shell_webhook`.
+Python: `php2shell_enabled`, `php2shell_profile`, `php2shell_mode`,
+`php2shell_path_prefix`, `php2shell_strength`, `php2shell_canary_tokens`,
+`php2shell_max_scan_bytes`, `php2shell_pressure_bytes`,
+`php2shell_session_ttl_seconds`, `php2shell_rate_limit_per_minute`,
+`php2shell_max_preview_bytes`, `php2shell_webhook`.
 
 Full reference: [`php2shell.md`](php2shell.md).

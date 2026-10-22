@@ -16,7 +16,8 @@
 Set `PHP2SHELL=1` to turn every non-chat path into a PHP2Shell HTTP decoy.
 `/api/chat`, `/healthz`, and `/api/healthz` keep their existing behavior. Use a
 dedicated Worker hostname; the catch-all is not meant for a production site's
-main hostname. Configure with `PHP2SHELL_PROFILE`, `PHP2SHELL_STRENGTH`,
+main hostname. Configure with `PHP2SHELL_PROFILE`, `PHP2SHELL_MODE`
+(`tripwire` or `scanner`), `PHP2SHELL_STRENGTH`,
 `PHP2SHELL_CANARY_TOKENS`, `PHP2SHELL_SCAN_BYTES`,
 `PHP2SHELL_PRESSURE_BYTES`, and `PHP2SHELL_WEBHOOK`. Full guide:
 `docs/php2shell.md`.

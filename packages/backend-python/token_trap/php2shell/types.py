@@ -17,6 +17,7 @@ DEFAULT_RATE_LIMIT_PER_MINUTE = 120
 DEFAULT_MAX_PREVIEW_BYTES = 2048
 
 PROFILES = ("generic", "wordpress", "drupal", "joomla")
+MODES = ("tripwire", "scanner")
 PHASES = ("recon", "pressure", "stale_reuse", "post_exploit")
 
 
@@ -73,6 +74,40 @@ class DetectionResult:
 
 
 @dataclasses.dataclass
+class ScannerState:
+    cwd: str = "/var/www/html"
+    hostname: str = "php-prod"
+    depth: int = 0
+    command_count: int = 0
+    last_command: Optional[str] = None
+    response_bytes: int = 0
+    estimated_tokens: int = 0
+
+    def to_dict(self) -> dict:
+        return {
+            "cwd": self.cwd,
+            "hostname": self.hostname,
+            "depth": self.depth,
+            "commandCount": self.command_count,
+            "lastCommand": self.last_command,
+            "responseBytes": self.response_bytes,
+            "estimatedTokens": self.estimated_tokens,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "ScannerState":
+        return cls(
+            cwd=data.get("cwd", "/var/www/html"),
+            hostname=data.get("hostname", "php-prod"),
+            depth=int(data.get("depth", 0)),
+            command_count=int(data.get("commandCount", 0)),
+            last_command=data.get("lastCommand"),
+            response_bytes=int(data.get("responseBytes", 0)),
+            estimated_tokens=int(data.get("estimatedTokens", 0)),
+        )
+
+
+@dataclasses.dataclass
 class Php2ShellState:
     session_id: str
     created_at: float
@@ -84,6 +119,8 @@ class Php2ShellState:
     upload_progress_seen: bool
     issued_canaries: Tuple[str, ...]
     canary_echoed: bool
+    scanner: Optional[ScannerState] = None
+    estimated_attacker_tokens: int = 0
 
     def to_dict(self) -> dict:
         return {
@@ -97,10 +134,13 @@ class Php2ShellState:
             "uploadProgressSeen": self.upload_progress_seen,
             "issuedCanaries": list(self.issued_canaries),
             "canaryEchoed": self.canary_echoed,
+            "scanner": self.scanner.to_dict() if self.scanner else None,
+            "estimatedAttackerTokens": self.estimated_attacker_tokens,
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> "Php2ShellState":
+        scanner = data.get("scanner")
         return cls(
             session_id=data["sessionId"],
             created_at=float(data["createdAt"]),
@@ -112,6 +152,8 @@ class Php2ShellState:
             upload_progress_seen=bool(data["uploadProgressSeen"]),
             issued_canaries=tuple(data.get("issuedCanaries", ())),
             canary_echoed=bool(data["canaryEchoed"]),
+            scanner=ScannerState.from_dict(scanner) if scanner else None,
+            estimated_attacker_tokens=int(data.get("estimatedAttackerTokens", 0)),
         )
 
 

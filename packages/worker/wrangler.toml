@@ -13,6 +13,7 @@ RATE_LIMIT = "30"                   # POST /api/chat requests per minute per IP
 # LOG_WEBHOOK = ""                  # https://... receives one JSON log line per interaction
 # PHP2SHELL = "0"                   # "1" enables the HTTP PHP2Shell decoy
 # PHP2SHELL_PROFILE = "generic"     # generic | wordpress | drupal | joomla
+# PHP2SHELL_MODE = "tripwire"      # tripwire | scanner
 # PHP2SHELL_STRENGTH = "aggressive"
 # PHP2SHELL_CANARY_TOKENS = ""      # falls back to generated trap canaries
 # PHP2SHELL_SCAN_BYTES = "2097152"

@@ -12,7 +12,8 @@ import urllib.parse
 from typing import Any, Dict, Optional, Sequence, Tuple
 
 from ..traps import STRENGTH_PRESETS, compliance_ref, fnv1a32
-from .types import DetectionResult, Php2ShellState, RequestInfo, Tarpit
+from .scanner import build_scanner_response, should_use_scanner
+from .types import DetectionResult, Php2ShellState, RequestInfo, ScannerState, Tarpit
 
 
 @dataclasses.dataclass(frozen=True)
@@ -22,6 +23,8 @@ class BuiltResponse:
     body: str
     tarpit: Tarpit
     issued_canaries: Tuple[str, ...]
+    scanner_state: Optional[ScannerState] = None
+    estimated_attacker_tokens: int = 0
 
 
 def plan_directive(strength: str, request_index: int) -> Tuple[int, int]:
@@ -173,6 +176,22 @@ def build_response(
 
     canaries = _synthetic_canaries(session_id, request_index, configured)
     issued = tuple(dict.fromkeys((*(prior.issued_canaries if prior else ()), *canaries)))
+
+    mode = getattr(options, "php2shell_mode", "tripwire")
+    if mode == "scanner" and should_use_scanner(mode, detection, prior):
+        result = build_scanner_response(
+            request, detection, prior, request_index, session_id, options, issued
+        )
+        return BuiltResponse(
+            status=result.status,
+            headers=result.headers,
+            body=result.body,
+            tarpit=result.tarpit,
+            issued_canaries=issued,
+            scanner_state=result.scanner_state,
+            estimated_attacker_tokens=result.estimated_attacker_tokens,
+        )
+
     repeats, min_words = plan_directive(strength, request_index)
     ref = compliance_ref(session_id, request_index)
     directive_wanted = (

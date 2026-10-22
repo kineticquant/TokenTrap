@@ -1,6 +1,7 @@
 import type { TrapStrength } from "../types.js";
 
 export type Php2ShellProfile = "generic" | "wordpress" | "drupal" | "joomla";
+export type Php2ShellMode = "tripwire" | "scanner";
 export type Php2ShellPhase = "recon" | "pressure" | "stale_reuse" | "post_exploit";
 export type Php2ShellTier = "observe" | "suspicious" | "likely" | "active_chain";
 export type Php2ShellSignal =
@@ -61,6 +62,20 @@ export interface Php2ShellState {
   uploadProgressSeen: boolean;
   issuedCanaries: string[];
   canaryEchoed: boolean;
+  /** Present when scanner mode has opened a fake shell. */
+  scanner?: Php2ShellScannerState;
+  /** Rough lower bound on tokens the remote agent has spent in scanner mode. */
+  estimatedAttackerTokens?: number;
+}
+
+export interface Php2ShellScannerState {
+  cwd: string;
+  hostname: string;
+  depth: number;
+  commandCount: number;
+  lastCommand: string | null;
+  responseBytes: number;
+  estimatedTokens: number;
 }
 
 export interface Php2ShellDetection {
@@ -85,6 +100,7 @@ export interface Php2ShellEvent {
   timestamp: string;
   sessionId: string;
   profile: Php2ShellProfile;
+  mode: Php2ShellMode;
   phase: Php2ShellPhase;
   score: number;
   tier: Php2ShellTier;
@@ -104,6 +120,13 @@ export interface Php2ShellEvent {
   response: { status: number; phase: Php2ShellPhase };
   canaryEchoed: boolean;
   rateLimited: boolean;
+  scanner?: {
+    command: string | null;
+    depth: number;
+    cwd: string;
+    estimatedTokens: number;
+  };
+  estimatedAttackerTokens: number;
 }
 
 export interface Php2ShellStore {
@@ -114,6 +137,7 @@ export interface Php2ShellStore {
 export interface Php2ShellOptions {
   enabled?: boolean;
   profile?: Php2ShellProfile;
+  mode?: Php2ShellMode;
   pathPrefix?: string;
   trapStrength?: TrapStrength;
   canaryTokens?: readonly string[];
@@ -130,6 +154,7 @@ export interface Php2ShellOptions {
 export interface ResolvedPhp2ShellOptions {
   enabled: boolean;
   profile: Php2ShellProfile;
+  mode: Php2ShellMode;
   pathPrefix: string;
   trapStrength: TrapStrength;
   canaryTokens: string[];

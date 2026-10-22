@@ -33,6 +33,8 @@ The PHP2Shell module is an optional fourth surface, not a change to the chat eng
 
 - `packages/widget/src/php2shell/` holds the dependency-free detector, phase state
   machine, response templates, canary generator, and Web `Request → Response` handler.
+  `scanner.ts` adds the opt-in fake-shell/rabbit-hole response strategy; it is selected by
+  `mode: "scanner"` and never touches PHP, files, or the network.
 - Node/Express/Next adapters live behind `tokentrap-ai/php2shell/node`; the CLI is
   `tokentrap-php2shell`.
 - The Worker imports the same core and enables it with `PHP2SHELL=1`.

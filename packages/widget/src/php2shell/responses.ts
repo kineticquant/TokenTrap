@@ -1,9 +1,11 @@
 import { complianceRef, fnv1a32 } from "../trapEngine.js";
 import { STRENGTH_PRESETS } from "../types.js";
 import type { TrapStrength } from "../types.js";
+import { buildScannerResponse, shouldUseScanner } from "./scanner.js";
 import type {
   Php2ShellDetection,
   Php2ShellRequestInfo,
+  Php2ShellScannerState,
   Php2ShellState,
   Php2ShellTarpit,
   ResolvedPhp2ShellOptions,
@@ -22,6 +24,8 @@ export interface BuiltResponse {
   response: Response;
   tarpit: Php2ShellTarpit;
   issuedCanaries: string[];
+  scannerState?: Php2ShellScannerState;
+  estimatedAttackerTokens?: number;
 }
 
 export function planDirective(
@@ -145,6 +149,26 @@ export function buildResponse(input: BuildResponseInput): BuiltResponse {
   const { request, detection, prior, requestIndex, sessionId, options } = input;
   const canaries = syntheticCanaries(sessionId, requestIndex, options.canaryTokens);
   const issuedCanaries = [...new Set([...(prior?.issuedCanaries ?? []), ...canaries])];
+
+  if (options.mode === "scanner" && shouldUseScanner(options.mode, detection, prior)) {
+    const scanner = buildScannerResponse({
+      request,
+      detection,
+      prior,
+      requestIndex,
+      sessionId,
+      options,
+      canaries: issuedCanaries,
+    });
+    return {
+      response: scanner.response,
+      tarpit: scanner.tarpit,
+      issuedCanaries,
+      scannerState: scanner.scannerState,
+      estimatedAttackerTokens: scanner.estimatedAttackerTokens,
+    };
+  }
+
   const { repeats, minWords } = planDirective(options.trapStrength, requestIndex);
   const ref = complianceRef(sessionId, requestIndex);
   const directiveWanted =

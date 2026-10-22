@@ -66,6 +66,12 @@ def _add_php2shell_args(parser: argparse.ArgumentParser, *, enable_flag: bool) -
         default=None,
         help="decoy identity (default generic)",
     )
+    parser.add_argument(
+        "--php2shell-mode",
+        choices=("tripwire", "scanner"),
+        default=None,
+        help="tripwire (default) or scanner tarpit",
+    )
     parser.add_argument("--php2shell-path-prefix", default=None, help="decoy path prefix")
     parser.add_argument(
         "--php2shell-strength", choices=STRENGTHS, default=None, help="tarpit strength for the decoy"
@@ -103,6 +109,8 @@ def _config_from_args(args: argparse.Namespace) -> TrapConfig:
         cfg.php2shell_enabled = True
     if getattr(args, "php2shell_profile", None):
         cfg.php2shell_profile = args.php2shell_profile
+    if getattr(args, "php2shell_mode", None):
+        cfg.php2shell_mode = args.php2shell_mode
     if getattr(args, "php2shell_path_prefix", None) is not None:
         cfg.php2shell_path_prefix = args.php2shell_path_prefix
     if getattr(args, "php2shell_strength", None):

@@ -75,6 +75,8 @@ import { createPhp2ShellDecoy } from "tokentrap-ai/php2shell";
 import { toNodeHandler } from "tokentrap-ai/php2shell/node";
 
 const decoy = createPhp2ShellDecoy({ profile: "generic" });
+// scanner tarpit mode:
+// createPhp2ShellDecoy({ profile: "generic", mode: "scanner" })
 // createServer(toNodeHandler(decoy)).listen(8080)
 ```
 
@@ -82,6 +84,7 @@ Or run the standalone binary:
 
 ```bash
 npx tokentrap-php2shell --port 8080 --profile wordpress
+npx tokentrap-php2shell --mode scanner --port 8080 --profile wordpress
 ```
 
 The decoy is a separate opt-in surface; it does not change the chat engine. See

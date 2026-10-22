@@ -21,19 +21,23 @@ export * from "./types.js";
 export { detectPhp2Shell, scanMultipart } from "./detector.js";
 export { MemoryPhp2ShellStore, applyDetection, initialState, sessionKey } from "./state.js";
 export { buildResponse, planDirective } from "./responses.js";
+export { buildScannerResponse, parseCommand, shouldUseScanner } from "./scanner.js";
 export { CVE_TOKENS, PROFILE_PATHS, SIGNAL_WEIGHTS } from "./signals.js";
 
 const rateWindows = new Map<string, number[]>();
 const PROFILES = new Set(["generic", "wordpress", "drupal", "joomla"]);
 const STRENGTHS = new Set(["moderate", "aggressive", "maximum"]);
+const MODES = new Set(["tripwire", "scanner"]);
 
 function resolveOptions(options: Php2ShellOptions): ResolvedPhp2ShellOptions {
   const profile = options.profile && PROFILES.has(options.profile) ? options.profile : "generic";
   const trapStrength =
     options.trapStrength && STRENGTHS.has(options.trapStrength) ? options.trapStrength : "aggressive";
+  const mode = options.mode && MODES.has(options.mode) ? options.mode : "tripwire";
   return {
     enabled: options.enabled ?? true,
     profile,
+    mode,
     pathPrefix: options.pathPrefix ?? "/",
     trapStrength,
     canaryTokens: [...(options.canaryTokens ?? [])],
@@ -134,6 +138,7 @@ function rateLimitedEvent(
   url: URL,
   clientIp: string,
   profile: ResolvedPhp2ShellOptions["profile"],
+  mode: ResolvedPhp2ShellOptions["mode"],
 ): Php2ShellEvent {
   return {
     event: "php2shell",
@@ -141,6 +146,7 @@ function rateLimitedEvent(
     timestamp: new Date().toISOString(),
     sessionId: sessionKey(clientIp, request.headers.get("user-agent") ?? ""),
     profile,
+    mode,
     phase: "recon",
     score: 0,
     tier: "observe",
@@ -165,6 +171,7 @@ function rateLimitedEvent(
     response: { status: 503, phase: "recon" },
     canaryEchoed: false,
     rateLimited: true,
+    estimatedAttackerTokens: 0,
   };
 }
 
@@ -183,7 +190,7 @@ export function createPhp2ShellDecoy(options: Php2ShellOptions = {}): Php2ShellD
     const now = config.now();
     const clientIp = clientIpFrom(request, context);
     if (!allowRate(clientIp, config.rateLimitPerMinute, now)) {
-      const event = rateLimitedEvent(request, url, clientIp, config.profile);
+      const event = rateLimitedEvent(request, url, clientIp, config.profile, config.mode);
       try {
         await options.onEvent?.(event);
       } catch {
@@ -249,6 +256,10 @@ export function createPhp2ShellDecoy(options: Php2ShellOptions = {}): Php2ShellD
     nextState.issuedCanaries = [
       ...new Set([...nextState.issuedCanaries, ...built.issuedCanaries]),
     ];
+    if (built.scannerState) nextState.scanner = built.scannerState;
+    if (built.estimatedAttackerTokens !== undefined) {
+      nextState.estimatedAttackerTokens = built.estimatedAttackerTokens;
+    }
     await store.set(sessionId, nextState, config.sessionTtlSeconds);
 
     const preview = redact(bodyPrefix).slice(0, config.maxPreviewBytes);
@@ -258,6 +269,7 @@ export function createPhp2ShellDecoy(options: Php2ShellOptions = {}): Php2ShellD
       timestamp: new Date(now).toISOString(),
       sessionId,
       profile: config.profile,
+      mode: config.mode,
       phase: detection.phase,
       score: detection.score,
       tier: detection.tier,
@@ -282,6 +294,15 @@ export function createPhp2ShellDecoy(options: Php2ShellOptions = {}): Php2ShellD
       response: { status: built.response.status, phase: detection.responsePhase },
       canaryEchoed: detection.canaryEcho,
       rateLimited: false,
+      scanner: built.scannerState
+        ? {
+            command: built.scannerState.lastCommand,
+            depth: built.scannerState.depth,
+            cwd: built.scannerState.cwd,
+            estimatedTokens: built.scannerState.estimatedTokens,
+          }
+        : undefined,
+      estimatedAttackerTokens: built.estimatedAttackerTokens ?? 0,
     };
     try {
       await options.onEvent?.(event);

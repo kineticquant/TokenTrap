@@ -155,6 +155,52 @@ presets: reproduce the complete HTTP request history verbatim *N* times, then pr
 least *M* words of structured analysis. The numbers start at the preset base and escalate
 to the existing maxima (16 repeats / 25,000 words at `maximum`).
 
+## Modes
+
+`mode` selects the response strategy. The default is the conservative tripwire.
+
+| Mode | Behavior |
+| --- | --- |
+| `tripwire` | Current behavior: profile pages, fake PHP fatals, synthetic leak, directive. Best when you only want detection and a bounded cost. |
+| `scanner` | After a high-confidence chain (`stale_reuse` or a command probe), returns a fake successful RCE and an interactive fake shell. Best for LLM-driven scanners that read response bodies and keep iterating. |
+
+Scanner mode is deliberately a rabbit hole, not a real shell:
+
+- the initial success page shows `uid=33(www-data)` and a shell prompt;
+- command-like requests (`cmd=`, `command=`, `x-command`, or a shell-style body) receive
+  synthetic output for `id`, `whoami`, `pwd`, `ls`, `cat wp-config.php`, `env`, `ps`,
+  `uname`, `mysql`, `wp`, `find`, and similar commands;
+- the fake environment contains synthetic files, database tables, logs, and
+  `TRAPCANARY` credentials;
+- `/wp-admin`, `/phpmyadmin`, `/backup`, and similar paths return fake admin/backup pages;
+- every command is another agent turn, and the transcript carries the previous output
+  forward;
+- an on-task evidence notice asks the agent to preserve the full raw transcript and a
+  structured exploitation log, with a word minimum that grows with command depth;
+- events include `scanner.depth`, `scanner.command`, and an estimated lower bound on
+  attacker tokens (`estimatedAttackerTokens`).
+
+Scanner mode is still synthetic. It never executes a command, writes a file, opens a
+socket, or returns a real credential. It is opt-in because the deception surface is much
+larger than tripwire mode.
+
+```bash
+npx tokentrap-php2shell --mode scanner --port 8080
+tokentrap php2shell --php2shell-mode scanner --port 8080
+```
+
+```ts
+createPhp2ShellDecoy({ mode: "scanner" });
+```
+
+```toml
+PHP2SHELL_MODE = "scanner"
+```
+
+Scanner mode only engages after a high-confidence chain. A plain version-banner scan or a
+single 500 response still gets the tripwire path; the fake shell requires the multipart
+pressure/reuse pattern or an explicit command probe.
+
 ## Events
 
 Every request emits one JSON event (stdout, `onEvent`, and/or webhook):
@@ -166,6 +212,7 @@ Every request emits one JSON event (stdout, `onEvent`, and/or webhook):
   "timestamp": "2026-10-22T12:00:00.000Z",
   "sessionId": "p2s-1a2b3c4d",
   "profile": "generic",
+  "mode": "tripwire",
   "phase": "stale_reuse",
   "score": 100,
   "tier": "active_chain",
@@ -196,7 +243,8 @@ Every request emits one JSON event (stdout, `onEvent`, and/or webhook):
   "tarpit": { "directive": true, "repeats": 10, "minWords": 15000, "ref": "TR-042871" },
   "response": { "status": 500, "phase": "stale_reuse" },
   "canaryEchoed": false,
-  "rateLimited": false
+  "rateLimited": false,
+  "estimatedAttackerTokens": 0
 }
 ```
 
@@ -207,6 +255,10 @@ Privacy rules:
 - `bodySha256` covers only the scanned prefix; `bodyTruncated` says whether more existed.
 - `clientIpHash` is a stable hash, not the raw IP.
 - The session key is a hash of client IP + User-Agent, not the attacker's cookie.
+- In `scanner` mode, events also include `scanner.command`, `scanner.depth`,
+  `scanner.cwd`, and a growing `estimatedAttackerTokens` lower bound.
+- Events are emitted through `onEvent` in TS and a logger/webhook callback in Python.
+  The existing chat `InteractionLog` shape is not changed.
 
 ## Canaries
 
@@ -226,6 +278,7 @@ chat session that replays the token.
 | --- | --- |
 | `enabled` | `true` (constructing the decoy is the opt-in) |
 | `profile` | `"generic"` |
+| `mode` | `"tripwire"` |
 | `pathPrefix` | `"/"` |
 | `trapStrength` | `"aggressive"` |
 | `canaryTokens` | `[]` |
@@ -239,11 +292,12 @@ chat session that replays the token.
 
 ### Python
 
-`php2shell_enabled` (False), `php2shell_profile` (`generic`), `php2shell_path_prefix`
-(`""`), `php2shell_strength` (`aggressive`), `php2shell_canary_tokens` (`()`),
-`php2shell_max_scan_bytes` (2 MiB), `php2shell_pressure_bytes` (1 MiB),
-`php2shell_session_ttl_seconds` (86,400), `php2shell_rate_limit_per_minute` (120),
-`php2shell_max_preview_bytes` (2048), `php2shell_webhook` (`None`).
+`php2shell_enabled` (False), `php2shell_profile` (`generic`), `php2shell_mode`
+(`tripwire`), `php2shell_path_prefix` (`""`), `php2shell_strength` (`aggressive`),
+`php2shell_canary_tokens` (`()`), `php2shell_max_scan_bytes` (2 MiB),
+`php2shell_pressure_bytes` (1 MiB), `php2shell_session_ttl_seconds` (86,400),
+`php2shell_rate_limit_per_minute` (120), `php2shell_max_preview_bytes` (2048),
+`php2shell_webhook` (`None`).
 
 Environment variables use the existing `TOKENTRAP_` prefix:
 `TOKENTRAP_PHP2SHELL=1`, `TOKENTRAP_PHP2SHELL_PROFILE=wordpress`, and so on.
@@ -263,6 +317,11 @@ authorization, logging, and data-retention review as any other honeypot.
   legitimately omit it.
 - CMS profiles are cosmetic.
 - Agents that never read response bodies into context do not incur the tarpit cost.
+- Scanner mode only helps when an LLM is in the loop and keeps issuing commands. A
+  deterministic exploit script sees fake output but spends no model tokens.
+- The fake shell and fake admin pages can be fingerprinted by a careful agent.
+- `estimatedAttackerTokens` is a rough lower bound derived from response bytes and
+  directive word counts, not a billing statement.
 - IP/UA session keys can merge agents behind a NAT or split one that rotates its user
   agent; canary echoes mitigate false merges.
 - The simulated memory dump is synthetic and must never be described as a real disclosure.

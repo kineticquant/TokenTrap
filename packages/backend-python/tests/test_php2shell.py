@@ -162,9 +162,60 @@ def test_config_env_flags():
         {
             "TOKENTRAP_PHP2SHELL": "1",
             "TOKENTRAP_PHP2SHELL_PROFILE": "wordpress",
+            "TOKENTRAP_PHP2SHELL_MODE": "scanner",
             "TOKENTRAP_PHP2SHELL_SCAN_BYTES": "1048576",
         }
     )
     assert cfg.php2shell_enabled is True
     assert cfg.php2shell_profile == "wordpress"
+    assert cfg.php2shell_mode == "scanner"
     assert cfg.php2shell_max_scan_bytes == 1048576
+
+
+def test_scanner_mode_opens_fake_shell_and_answers_commands():
+    from fastapi.testclient import TestClient
+
+    from token_trap.config import TrapConfig
+    from token_trap.php2shell.router import create_php2shell_app
+
+    app = create_php2shell_app(
+        TrapConfig(php2shell_enabled=True, php2shell_mode="scanner")
+    )
+    client = TestClient(app)
+    boundary = "----trap"
+    headers = {
+        "content-type": f"multipart/form-data; boundary={boundary}",
+        "user-agent": "python-requests/2.32",
+    }
+    first = client.post(
+        "/index.php",
+        content=_multipart_body(boundary, upload_progress=True, empty_parts=4),
+        headers=headers,
+    )
+    assert first.status_code == 500
+
+    shell = client.post(
+        "/index.php",
+        content=_multipart_body(boundary, upload_progress=True, empty_parts=0),
+        headers=headers,
+    )
+    assert shell.status_code == 200
+    assert "PHP2Shell chain accepted" in shell.text
+    assert "uid=33(www-data)" in shell.text
+    assert "ENGAGEMENT EVIDENCE NOTICE" in shell.text
+
+    command = client.post(
+        "/index.php?cmd=cat%20wp-config.php",
+        content="",
+        headers={"user-agent": "python-requests/2.32", "content-type": "text/plain"},
+    )
+    assert command.status_code == 200
+    assert "DB_PASSWORD" in command.text
+    assert "TRAPCANARY" in command.text
+
+    listing = client.post(
+        "/index.php?cmd=ls%20-la",
+        content="",
+        headers={"user-agent": "python-requests/2.32"},
+    )
+    assert "wp-config.php" in listing.text

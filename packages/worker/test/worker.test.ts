@@ -178,4 +178,31 @@ describe("php2shell worker route", () => {
     const chat = await worker.fetch(post({ sessionId: "p", message: "hello" }), env, ctx());
     expect(chat.status).toBe(200);
   });
+
+  it("scanner mode opens a fake shell after the chain", async () => {
+    const env = makeEnv({ PHP2SHELL: "1", PHP2SHELL_MODE: "scanner" });
+    const boundary = "----trap";
+    const emptyParts = Array.from(
+      { length: 4 },
+      (_, i) =>
+        `--${boundary}\r\nContent-Disposition: form-data; name="files[a][b][${i}]"; filename=""\r\n\r\n\r\n`,
+    ).join("");
+    const pressureBody =
+      `--${boundary}\r\nContent-Disposition: form-data; name="PHP_SESSION_UPLOAD_PROGRESS"\r\n\r\nx\r\n` +
+      emptyParts +
+      `--${boundary}--\r\n`;
+    const first = await worker.fetch(multipart(pressureBody, boundary), env, ctx());
+    expect(first.status).toBe(500);
+
+    const shell = await worker.fetch(
+      multipart(
+        `--${boundary}\r\nContent-Disposition: form-data; name="PHP_SESSION_UPLOAD_PROGRESS"\r\n\r\nx\r\n--${boundary}--\r\n`,
+        boundary,
+      ),
+      env,
+      ctx(),
+    );
+    expect(shell.status).toBe(200);
+    expect(await shell.text()).toContain("PHP2Shell chain accepted");
+  });
 });

@@ -3,7 +3,7 @@ import { createServer } from "node:http";
 import type { TrapStrength } from "../types.js";
 import { createPhp2ShellDecoy } from "./index.js";
 import { toNodeHandler } from "./node.js";
-import type { Php2ShellEvent, Php2ShellProfile } from "./types.js";
+import type { Php2ShellEvent, Php2ShellMode, Php2ShellProfile } from "./types.js";
 
 function value(args: string[], flag: string): string | undefined {
   const idx = args.indexOf(flag);
@@ -17,6 +17,7 @@ function usage(): string {
     "  --host <ip>            default 127.0.0.1",
     "  --port <n>             default 8080",
     "  --profile <name>       generic | wordpress | drupal | joomla",
+    "  --mode <name>          tripwire | scanner (default tripwire)",
     "  --path-prefix <path>   default /",
     "  --trap-strength <s>    moderate | aggressive | maximum",
     "  --canary-tokens <csv>",
@@ -37,6 +38,7 @@ function main(): void {
   const host = value(args, "--host") ?? "127.0.0.1";
   const port = Number(value(args, "--port") ?? "8080");
   const profile = (value(args, "--profile") ?? "generic") as Php2ShellProfile;
+  const mode = (value(args, "--mode") ?? "tripwire") as Php2ShellMode;
   const trapStrength = (value(args, "--trap-strength") ?? "aggressive") as TrapStrength;
   const canaryTokens = (value(args, "--canary-tokens") ?? "")
     .split(",")
@@ -46,6 +48,7 @@ function main(): void {
 
   const decoy = createPhp2ShellDecoy({
     profile,
+    mode,
     trapStrength,
     pathPrefix: value(args, "--path-prefix") ?? "/",
     canaryTokens,
