@@ -37,4 +37,38 @@ export default defineConfig([
       return { js: ".global.js" };
     },
   },
+  {
+    entry: { php2shell: "src/php2shell/index.ts" },
+    format: ["esm", "cjs"],
+    dts: true,
+    sourcemap: true,
+    clean: false,
+    outExtension({ format }) {
+      if (format === "cjs") return { js: ".cjs" };
+      return { js: ".js" };
+    },
+  },
+  {
+    entry: { "php2shell-node": "src/php2shell/node.ts" },
+    format: ["esm", "cjs"],
+    platform: "node",
+    dts: true,
+    sourcemap: true,
+    clean: false,
+    outExtension({ format }) {
+      if (format === "cjs") return { js: ".cjs" };
+      return { js: ".js" };
+    },
+  },
+  {
+    entry: { "php2shell-cli": "src/php2shell/cli.ts" },
+    format: ["esm"],
+    platform: "node",
+    dts: false,
+    sourcemap: true,
+    clean: false,
+    outExtension() {
+      return { js: ".js" };
+    },
+  },
 ]);

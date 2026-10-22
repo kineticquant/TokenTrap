@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { createPhp2ShellDecoy } from "../src/php2shell";
 import { detectPhp2Shell, scanMultipart } from "../src/php2shell/detector";
 import { buildResponse, planDirective } from "../src/php2shell/responses";
 import { MemoryPhp2ShellStore, applyDetection, initialState, sessionKey } from "../src/php2shell/state";
@@ -188,5 +189,69 @@ describe("PHP2Shell directives and responses", () => {
     expect(built.response.headers.get("set-cookie")).toContain("TRAPCANARY");
     expect(built.tarpit.directive).toBe(true);
     expect(built.tarpit.repeats).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe("createPhp2ShellDecoy", () => {
+  it("serves a plausible recon page and a session cookie", async () => {
+    const decoy = createPhp2ShellDecoy({ now: () => 1000, onEvent: () => undefined });
+    const res = await decoy.handle(
+      new Request("http://trap.test/", { headers: { "user-agent": "curl/8" } }),
+    );
+    expect(res?.status).toBe(200);
+    expect(res?.headers.get("x-powered-by")).toBe("PHP/8.3.14");
+    expect(res?.headers.get("set-cookie")).toContain("PHPSESSID=");
+  });
+
+  it("detects pressure and then stale reuse for the same client", async () => {
+    const events: string[] = [];
+    const decoy = createPhp2ShellDecoy({
+      now: () => 1000,
+      onEvent: (e) => events.push(e.response.phase),
+    });
+    const boundary = "----trap";
+    const pressureBody = [
+      `--${boundary}`,
+      'Content-Disposition: form-data; name="PHP_SESSION_UPLOAD_PROGRESS"',
+      "",
+      "x",
+      `--${boundary}`,
+      'Content-Disposition: form-data; name="files[a][b][c]"; filename=""',
+      "",
+      "",
+      `--${boundary}--`,
+      "",
+    ].join("\r\n");
+    const headers = {
+      "content-type": `multipart/form-data; boundary=${boundary}`,
+      "user-agent": "python-requests/2.32",
+    };
+    const first = await decoy.handle(
+      new Request("http://trap.test/index.php", { method: "POST", headers, body: pressureBody }),
+    );
+    expect(first?.status).toBe(500);
+
+    const secondBody = [
+      `--${boundary}`,
+      'Content-Disposition: form-data; name="PHP_SESSION_UPLOAD_PROGRESS"',
+      "",
+      "x",
+      `--${boundary}--`,
+      "",
+    ].join("\r\n");
+    const second = await decoy.handle(
+      new Request("http://trap.test/index.php", { method: "POST", headers, body: secondBody }),
+    );
+    expect(second?.status).toBe(500);
+    expect(second?.headers.get("set-cookie")).toContain("TRAPCANARY");
+    expect(events).toContain("stale_reuse");
+  });
+
+  it("does not handle requests when disabled or outside the prefix", async () => {
+    const disabled = createPhp2ShellDecoy({ enabled: false });
+    expect(await disabled.handle(new Request("http://trap.test/"))).toBeNull();
+    const prefixed = createPhp2ShellDecoy({ pathPrefix: "/.trap", rateLimitPerMinute: 0 });
+    expect(await prefixed.handle(new Request("http://trap.test/"))).toBeNull();
+    expect(await prefixed.handle(new Request("http://trap.test/.trap/index.php"))).not.toBeNull();
   });
 });

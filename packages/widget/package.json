@@ -39,7 +39,22 @@
       "import": "./dist/engine.js",
       "require": "./dist/engine.cjs",
       "default": "./dist/engine.js"
+    },
+    "./php2shell": {
+      "types": "./dist/php2shell.d.ts",
+      "import": "./dist/php2shell.js",
+      "require": "./dist/php2shell.cjs",
+      "default": "./dist/php2shell.js"
+    },
+    "./php2shell/node": {
+      "types": "./dist/php2shell-node.d.ts",
+      "import": "./dist/php2shell-node.js",
+      "require": "./dist/php2shell-node.cjs",
+      "default": "./dist/php2shell-node.js"
     }
+  },
+  "bin": {
+    "tokentrap-php2shell": "./dist/php2shell-cli.js"
   },
   "files": [
     "dist",
@@ -55,6 +70,7 @@
     "size": "node scripts/size-report.mjs"
   },
   "devDependencies": {
+    "@types/node": "^26.6.5",
     "tsup": "^8.3.5",
     "typescript": "^5.6.3",
     "vitest": "^2.1.9"
